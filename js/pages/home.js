@@ -46,7 +46,7 @@ export function pageHome() {
   const week = overall();
   const main = `
     ${hero({
-      cls: "home", photo: true, crumb: "Welcome back, Musfiq", title: "IELTSMee", plain: false,
+      cls: "home", photo: true, crumb: "Welcome back", title: "IELTSMee", plain: false,
       tag: "Learn. Practice. Improve.", sub: "Your own space for listening, speaking, reading and writing. Pick a skill and keep a small daily habit.",
       actions: `<a class="btn solid" href="#listening">Start today ${ic("arrow")}</a><a class="btn" href="#books">${ic("books")}Open my books</a>`
     })}

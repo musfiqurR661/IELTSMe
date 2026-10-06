@@ -2,7 +2,7 @@
 import {
   D, W, app, modal, api, esc, ic, store, S, learned, wordById, GCOL, today, toggleTick, mmss
 } from "./core.js?v=3";
-import { pageHome } from "./pages/home.js?v=9";
+import { pageHome } from "./pages/home.js?v=10";
 import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=8";
 import { TOPICS, wordHit } from "./topic-words.js?v=1";
 import { pageMap, pageWords, say } from "./pages/map.js?v=3";
