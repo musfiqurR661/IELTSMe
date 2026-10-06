@@ -50,6 +50,20 @@
   .hero.wide::before {
     background: linear-gradient(90deg, rgba(247,249,255,.98) 0%, rgba(247,249,255,.96) 40%, rgba(247,249,255,.72) 54%, rgba(247,249,255,0) 72%);
   }
+  .hero.speak, .hero.write { background-image: none; }
+  .hero.speak { background-color: #f4eee2; }
+  .hero.write { background-color: #f8ecde; }
+  .hero.speak::before, .hero.write::before {
+    inset: 0 0 0 58%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right center;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 24%);
+  }
+  .hero.speak::before { background-image: url("../img/hero-speaking.jpg?v=2"); }
+  .hero.write::before { background-image: url("../img/hero-writing.jpg?v=2"); }
+  .hero.speak .hero-copy, .hero.write .hero-copy { max-width: 52%; width: 52%; }
   .hero.home .hero-copy, .hero.wide .hero-copy { max-width: 54%; width: 54%; }
   .hero.home h1, .hero.wide h1 { font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
   .hero.home .sub, .hero.wide .sub { display: block; overflow: visible; -webkit-line-clamp: unset; line-clamp: unset; font-size: .9rem; }
@@ -69,6 +83,7 @@
   .hero:not(.home) .hero-art, .skill svg.deco { display: none; }
   .hero.home, .hero.wide { min-height: 210px; padding: 16px 14px; }
   .hero.home .hero-copy, .hero.wide .hero-copy { max-width: 56%; width: 56%; gap: 6px; }
+  .hero.speak .hero-copy, .hero.write .hero-copy { max-width: 52%; width: 52%; }
   .hero.home h1, .hero.wide h1 { font-size: 1.45rem; line-height: 1.15; }
   .hero.home h1 .ic, .hero.wide h1 .ic { width: .85em; height: .85em; }
   .hero.home .crumb, .hero.wide .crumb { font-size: .78rem; line-height: 1.3; }
