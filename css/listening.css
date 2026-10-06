@@ -47,7 +47,7 @@ button.topic { font: inherit; color: inherit; width: 100%; text-align: left; cur
 .topic .ico { width: 40px; height: 40px; border-radius: 12px; }
 .topic .ico .ic { width: 20px; height: 20px; }
 .topic .body { display: grid; gap: 2px; min-width: 0; }
-.topic b { font-size: .84rem; line-height: 1.25; color: var(--ink); overflow-wrap: anywhere; }
+.topic b { font-size: .84rem; line-height: 1.25; color: var(--ink); overflow-wrap: break-word; word-break: normal; hyphens: none; }
 .topic small { color: var(--muted); font-size: .72rem; font-weight: 700; }
 .topic .arrow { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.82); display: grid; place-items: center; color: var(--brand2); transition: transform .18s ease; }
 .topic:hover .arrow { transform: translateX(3px); }
@@ -97,7 +97,7 @@ button.topic { font: inherit; color: inherit; width: 100%; text-align: left; cur
 button.cat { font: inherit; color: inherit; width: 100%; text-align: left; cursor: pointer; display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; min-height: 74px; padding: 12px; border: 0; border-radius: 16px; transition: transform .18s ease, box-shadow .18s ease; }
 .cat:hover { transform: translateY(-3px); box-shadow: 0 12px 22px rgba(47, 58, 130, .14); }
 .cat .body { display: grid; gap: 2px; min-width: 0; }
-.cat b { font-size: .8rem; line-height: 1.25; color: var(--ink); overflow-wrap: anywhere; }
+.cat b { font-size: .8rem; line-height: 1.25; color: var(--ink); overflow-wrap: break-word; word-break: normal; hyphens: none; }
 .cat small { color: var(--muted); font-size: .72rem; font-weight: 700; }
 .cat .ico { width: 40px; height: 40px; border-radius: 12px; }
 .cat .ico .ic { width: 20px; height: 20px; }
