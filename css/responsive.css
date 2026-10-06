@@ -107,10 +107,20 @@
   .skill { padding: 16px 16px 14px 64px; min-height: 130px; }
   .hero h1 { font-size: 2.3rem; }
   .brand small { display: none; }
-  .brand b { font-size: 1.28rem; }
-  .brand-mark { width: 38px; height: 32px; }
-  .words-btn { height: 38px; padding: 0 12px; font-size: .78rem; }
-  .page { padding: 12px 12px 24px; }
+  .topbar { width: 100%; max-width: 100%; padding: 0 8px; gap: 6px; }
+  .nav-toggle, .icon-btn { width: 36px; height: 36px; }
+  .brand { flex: 1 1 auto; min-width: 0; overflow: hidden; gap: 6px; }
+  .brand-mark { width: 32px; height: 26px; }
+  .brand b { font-size: 1.05rem; white-space: nowrap; }
+  .actions { flex: none; gap: 6px; }
+  .words-btn { height: 36px; padding: 0 10px; gap: 4px; font-size: .72rem; white-space: nowrap; }
+  .page { width: 100%; max-width: 100%; min-width: 0; padding: 12px 12px 24px; overflow-x: clip; }
+  .main { width: 100%; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+  .main > *, .parts, .part, .three, .two, .card, .hero, .pg, .pg-row, .task-card, .task-head { min-width: 0; max-width: 100%; }
+  .two, .three, .triple, .trio, .map-grid { grid-template-columns: minmax(0, 1fr); }
+  .task-head > div { min-width: 0; }
+  .task-card .detail { flex-direction: column; }
+  .task-card .detail > * { min-width: 0; max-width: 100%; }
   .skill-row, .parts, .stat-row, .book-grid, .res-grid, .mat-grid, .tool-row, .type-grid, .idea-grid, .passages, .pop-row, .ext-strip { grid-template-columns: 1fr 1fr; }
   .topic-grid, .cat-bar { grid-template-columns: 1fr; }
   .page .rail { grid-template-columns: 1fr !important; }
