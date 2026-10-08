@@ -2,8 +2,9 @@
 import {
   D, W, app, modal, api, esc, ic, store, S, learned, wordById, GCOL, today, toggleTick, mmss
 } from "./core.js?v=3";
-import { pageHome } from "./pages/home.js?v=10";
-import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=8";
+import { pageHome } from "./pages/home.js?v=11";
+import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=9";
+import { pageLearn, pageListeningMap, noteBoard, learnState, mapTry, submitMapLesson, resetMapLesson } from "./pages/learn.js?v=2";
 import { TOPICS, wordHit } from "./topic-words.js?v=1";
 import { pageMap, pageWords, say } from "./pages/map.js?v=3";
 import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=3";
@@ -21,7 +22,7 @@ function openSearch() {
 }
 function searchRender(q) {
   q = q.trim().toLowerCase(); const out = [];
-  const pages = [["Home", "#home"], ["Listening", "#listening"], ["Map vocabulary", "#map"], ["My words", "#words"], ["Speaking", "#speaking"], ["Reading", "#reading"], ["Writing", "#writing"], ["Books", "#books"], ["Resources", "#resources"], ["My mistakes", "#mistakes"], ["Notes", "#notes"], ["My essays", "#essays"]];
+  const pages = [["Home", "#home"], ["My Learning", "#learn"], ["Listening Map", "#listening-map"], ["Listening", "#listening"], ["Map vocabulary", "#map"], ["My words", "#words"], ["Speaking", "#speaking"], ["Reading", "#reading"], ["Writing", "#writing"], ["Books", "#books"], ["Resources", "#resources"], ["My mistakes", "#mistakes"], ["Notes", "#notes"], ["My essays", "#essays"]];
   if (!q) { pages.forEach(([n, h]) => out.push({ k: "Page", t: n, h })); }
   else {
     pages.filter(([n]) => n.toLowerCase().includes(q)).forEach(([n, h]) => out.push({ k: "Page", t: n, h }));
@@ -77,8 +78,9 @@ function toast(msg) {
 }
 
 /* ---------- router ---------- */
-const PAGES = { home: pageHome, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
-const TAB = { map: "listening", words: "listening", essays: "writing", mistakes: "resources", notes: "resources" };
+const PAGES = { home: pageHome, learn: pageLearn, "listening-map": pageListeningMap, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
+const TAB = { learn: "learn", "listening-map": "learn", map: "listening", words: "listening", essays: "writing", mistakes: "resources", notes: "resources" };
+const TITLE = { home: "IELTSMee", learn: "My Learning · IELTSMee", "listening-map": "Listening Map · IELTSMee" };
 const routeName = () => { const r = (location.hash || "#home").slice(1).split("?")[0]; return PAGES[r] ? r : "home"; };
 let lastRoute = "";
 function render() {
@@ -87,7 +89,7 @@ function render() {
   app.innerHTML = PAGES[r]();
   document.querySelectorAll(".nav a[data-tab]").forEach((a) => a.classList.toggle("on", a.dataset.tab === (TAB[r] || r)));
   const L = learned().size; const wc2 = document.getElementById("words-count"); if (wc2) wc2.textContent = L ? L : "";
-  document.title = `${r === "home" ? "IELTSMee" : r.charAt(0).toUpperCase() + r.slice(1) + " · IELTSMee"}`;
+  document.title = TITLE[r] || `${r.charAt(0).toUpperCase() + r.slice(1)} · IELTSMee`;
   if (r !== lastRoute) window.scrollTo(0, 0); else window.scrollTo(0, y);
   lastRoute = r;
   armMotive(r);
@@ -190,6 +192,30 @@ document.addEventListener("click", (e) => {
     case "bookmark": { const m = store.get("mmi-bookmarks", []); const i = m.indexOf(v); i < 0 ? m.push(v) : m.splice(i, 1); store.set("mmi-bookmarks", m); render(); return; }
     case "addbook": openAddBook(); return;
     case "delmybook": { const l = mybooks(); l.splice(+v, 1); store.set("mmi-mybooks", l); render(); return; }
+    case "learnmod": learnState.mod = v; if (routeName() === "learn") render(); return;
+    case "notegroup": {
+      learnState.group = v;
+      document.querySelectorAll("[data-act='notegroup']").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+      const board = document.getElementById("note-board");
+      if (board) board.innerHTML = noteBoard();
+      return;
+    }
+    case "mappick": {
+      mapTry.picks[el.dataset.q] = v;
+      el.parentElement.querySelectorAll(".letter").forEach((b) => {
+        const on = b === el;
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      return;
+    }
+    case "mapsubmit": {
+      if (!submitMapLesson()) { toast("Choose a letter for every place."); return; }
+      render();
+      document.getElementById("map-practice")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    case "mapretry": resetMapLesson(); render(); document.getElementById("map-practice")?.scrollIntoView({ behavior: "smooth", block: "start" }); return;
     case "quiz": startQuiz(v); return;
     case "qopt": {
       if (quiz.answered) return; quiz.answered = true; const q = quiz.qs[quiz.i]; const ok = +v === q.w.id; if (ok) quiz.score++;

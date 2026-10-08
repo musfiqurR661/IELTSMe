@@ -107,6 +107,7 @@ export function pageListening() {
     </div>
     <div class="two">
       <div class="card library"><h3>${ic("list")}Keep going</h3><div class="link-list">
+        <a class="g-blue" href="#listening-map"><span class="l"><span class="ico t-blue">${ic("map")}</span>Today · Listening Map</span>${ic("arrow", "ext")}</a>
         <a class="g-violet" href="#map"><span class="l"><span class="ico t-violet">${ic("map")}</span>Map vocabulary</span>${ic("arrow", "ext")}</a>
         <a class="g-red" href="#words"><span class="l"><span class="ico t-red">${ic("heart")}</span>My words</span>${ic("arrow", "ext")}</a>
         <a class="g-orange" href="#mistakes"><span class="l"><span class="ico t-orange">${ic("wrong")}</span>My mistakes</span>${ic("arrow", "ext")}</a>
