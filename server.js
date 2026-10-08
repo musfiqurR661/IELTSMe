@@ -66,7 +66,7 @@ function layout(page) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;650&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css?v=53">
+  <link rel="stylesheet" href="/css/site.css?v=54">
 </head>
 <body data-page="${page}">
   <header class="topbar">
@@ -131,7 +131,7 @@ function layout(page) {
   <script src="/js/vocab.js?v=3"></script>
   <script src="/js/stickers.js?v=3"></script>
   <script src="/js/data.js?v=1"></script>
-  <script type="module" src="/js/app.js?v=34"></script>
+  <script type="module" src="/js/app.js?v=35"></script>
 </body>
 </html>`;
 }

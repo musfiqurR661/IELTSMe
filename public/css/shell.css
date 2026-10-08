@@ -4,8 +4,15 @@
 /* suggestion bubble */
 .suggest { position: fixed; right: 18px; bottom: 18px; z-index: 70; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
 .suggest-tip { position: absolute; right: 42px; bottom: 0; width: min(280px, calc(100vw - 80px)); margin: 0; padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 12px 32px rgba(20,26,77,.16); font-size: .82rem; font-weight: 700; color: var(--ink); line-height: 1.45; opacity: 0; pointer-events: none; transform: translateY(6px); transition: opacity .18s ease, transform .18s ease; }
-.suggest:hover .suggest-tip, .suggest:focus-within .suggest-tip { opacity: 1; transform: none; }
-.suggest.is-open .suggest-tip { opacity: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .suggest:hover .suggest-tip { opacity: 1; transform: none; }
+}
+.suggest.is-open .suggest-tip,
+.suggest.is-open:hover .suggest-tip,
+.suggest.is-open:focus-within .suggest-tip { opacity: 0; visibility: hidden; }
+@media (hover: none), (pointer: coarse) {
+  .suggest-tip { display: none; }
+}
 .suggest-btn { position: relative; z-index: 1; width: 32px; height: 32px; padding: 2px; border-radius: 50%; background: #fff; box-shadow: 0 6px 14px rgba(20,26,77,.18); }
 .suggest-btn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 18%; display: block; }
 .suggest-btn::before { content: ""; position: absolute; inset: -2px; z-index: -1; border-radius: 50%; background: conic-gradient(from 0deg, #4a3af0, #ec315a, #1b8fe8, #4a3af0); animation: suggest-spin 3.6s linear infinite; }

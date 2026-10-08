@@ -85,6 +85,7 @@ function closeSuggest() {
   form.hidden = true;
   box.classList.remove("is-open");
   if (btn) btn.setAttribute("aria-expanded", "false");
+  if (document.activeElement && box.contains(document.activeElement)) document.activeElement.blur();
 }
 function openSuggest() {
   const box = document.getElementById("suggest");
