@@ -1,5 +1,5 @@
 import { D, S, store, hero, crumb, ic, esc, lizBtn, shell, weekPct, isTicked, todayDone } from "../core.js?v=5";
-import { learnFinish } from "./learn.js?v=6";
+import { learnFinish } from "./learn.js?v=8";
 
 export function pageReading() {
   const rt = D.readingTypes.find((t) => t.id === S.rtype) || D.readingTypes[0];

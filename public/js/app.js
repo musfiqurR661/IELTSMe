@@ -2,14 +2,14 @@
 import {
   D, W, app, modal, api, esc, ic, store, S, learned, wordById, GCOL, today, toggleTick, mmss, PAGE_FILE, url
 } from "./core.js?v=5";
-import { pageHome } from "./pages/home.js?v=14";
-import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=13";
-import { pageLearn, pageListeningMap, noteBoard, learnState, mapTry, submitMapLesson, resetMapLesson, saveLearnLog } from "./pages/learn.js?v=6";
+import { pageHome } from "./pages/home.js?v=16";
+import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=15";
+import { pageLearn, pageListeningMap, noteBoard, learnState, mapTries, mapAttempt, submitMapLesson, resetMapLesson, saveLearnLog } from "./pages/learn.js?v=8";
 import { TOPICS, wordHit } from "./topic-words.js?v=1";
 import { pageMap, pageWords, say } from "./pages/map.js?v=5";
-import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=6";
-import { pageReading } from "./pages/reading.js?v=6";
-import { pageWriting, pageEssays, wc } from "./pages/writing.js?v=7";
+import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=8";
+import { pageReading } from "./pages/reading.js?v=8";
+import { pageWriting, pageEssays, wc } from "./pages/writing.js?v=9";
 import { pageBooks, booksGrid, mybooks, allBooks } from "./pages/books.js?v=4";
 import { pageResources, pageMistakes, pageNotes } from "./pages/resources.js?v=4";
 
@@ -88,7 +88,7 @@ function saveView() {
     sessionStorage.setItem("mmi-view", JSON.stringify({
       S: { ...S },
       learn: { mod: learnState.mod, group: learnState.group, day: learnState.day },
-      mapTry: { picks: mapTry.picks, result: mapTry.result }
+      mapTries: Object.fromEntries(Object.entries(mapTries).map(([id, t]) => [id, { picks: t.picks, result: t.result }]))
     }));
   } catch (e) { /* private mode */ }
 }
@@ -98,7 +98,14 @@ function restoreView() {
     if (!v) return;
     if (v.S) Object.assign(S, v.S);
     if (v.learn) Object.assign(learnState, v.learn);
-    if (v.mapTry) { mapTry.picks = v.mapTry.picks || {}; mapTry.result = v.mapTry.result || null; }
+    const savedTries = v.mapTries || (v.mapTry ? { farm: v.mapTry } : null);
+    if (savedTries) {
+      Object.entries(savedTries).forEach(([id, data]) => {
+        const t = mapAttempt(id);
+        t.picks = (data && data.picks) || {};
+        t.result = (data && data.result) || null;
+      });
+    }
   } catch (e) { /* ignore a bad snapshot */ }
 }
 function visit(href) { saveView(); location.href = href; }
@@ -227,7 +234,8 @@ document.addEventListener("click", (e) => {
       return;
     }
     case "mappick": {
-      mapTry.picks[el.dataset.q] = v;
+      const attempt = mapAttempt(el.dataset.lesson || "farm");
+      attempt.picks[el.dataset.q] = v;
       el.parentElement.querySelectorAll(".letter").forEach((b) => {
         const on = b === el;
         b.classList.toggle("on", on);
@@ -236,12 +244,12 @@ document.addEventListener("click", (e) => {
       return;
     }
     case "mapsubmit": {
-      if (!submitMapLesson()) { toast("Choose a letter for every place."); return; }
+      if (!submitMapLesson(el.dataset.lesson || "farm")) { toast("Choose a letter for every place."); return; }
       render();
       document.getElementById("map-practice")?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
-    case "mapretry": resetMapLesson(); render(); document.getElementById("map-practice")?.scrollIntoView({ behavior: "smooth", block: "start" }); return;
+    case "mapretry": resetMapLesson(el.dataset.lesson || "farm"); render(); document.getElementById("map-practice")?.scrollIntoView({ behavior: "smooth", block: "start" }); return;
     case "quiz": startQuiz(v); return;
     case "qopt": {
       if (quiz.answered) return; quiz.answered = true; const q = quiz.qs[quiz.i]; const ok = +v === q.w.id; if (ok) quiz.score++;

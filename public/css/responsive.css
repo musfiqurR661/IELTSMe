@@ -10,13 +10,13 @@
 }
 @media (max-width: 1040px) {
   .topbar { height: 64px; flex-wrap: nowrap; padding: 0 12px; gap: 10px; z-index: 50; backdrop-filter: none; background: #fff; }
-  .nav-toggle { display: grid; place-items: center; position: relative; width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: #fff; flex: none; }
-  .nav-toggle span { position: absolute; left: 12px; width: 18px; height: 2px; border-radius: 2px; background: var(--ink); transition: transform .2s ease, opacity .2s ease; }
-  .nav-toggle span:nth-child(1) { transform: translateY(-6px); }
-  .nav-toggle span:nth-child(3) { transform: translateY(6px); }
-  body.nav-open .nav-toggle span:nth-child(1) { transform: rotate(45deg); }
+  .nav-toggle { display: grid; place-items: center; position: relative; width: 42px; height: 42px; padding: 0; border-radius: 12px; border: 1px solid var(--line); background: #fff; flex: none; }
+  .nav-toggle span { position: absolute; left: 50%; top: 50%; width: 16px; height: 2px; border-radius: 2px; background: var(--ink); transform: translate(-50%, -50%); transition: transform .2s ease, opacity .2s ease; }
+  .nav-toggle span:nth-child(1) { transform: translate(-50%, calc(-50% - 5px)); }
+  .nav-toggle span:nth-child(3) { transform: translate(-50%, calc(-50% + 5px)); }
+  body.nav-open .nav-toggle span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
   body.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
-  body.nav-open .nav-toggle span:nth-child(3) { transform: rotate(-45deg); }
+  body.nav-open .nav-toggle span:nth-child(3) { transform: translate(-50%, -50%) rotate(-45deg); }
   .nav-scrim { display: block; position: fixed; top: 64px; right: 0; bottom: 0; left: 0; z-index: 45; border: 0; padding: 0; background: rgba(20, 26, 77, .42); opacity: 0; pointer-events: none; transition: opacity .28s ease; }
   body.nav-open .nav-scrim { opacity: 1; pointer-events: auto; }
   .nav { position: fixed; top: 64px; left: 0; bottom: 0; z-index: 46; width: min(300px, 86vw); flex: none; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 4px; padding: 14px 12px 28px; overflow: auto; background: linear-gradient(180deg, #f4f7ff 0%, #fff 120px); border-right: 1px solid var(--line); box-shadow: 16px 0 36px rgba(47, 58, 130, .14); transform: translateX(-105%); transition: transform .28s ease; pointer-events: none; }

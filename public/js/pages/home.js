@@ -1,5 +1,5 @@
-import { D, esc, ic, deco, hero, shell, isTicked, todayDone, weekPct, overall, store, url } from "../core.js?v=5";
-import { learnSummary } from "./learn.js?v=6";
+import { D, esc, ic, deco, hero, shell, isTicked, todayDone, weekPct, overall, url } from "../core.js?v=5";
+import { learnSummary, mapLessonHomeLine } from "./learn.js?v=8";
 
 export function pageHome() {
   const pop = [
@@ -61,7 +61,7 @@ export function pageHome() {
       <div class="section-head"><h2>${ic("cap")}My Learning</h2><a class="more" href="${url("learn")}">All four modules →</a></div>
       <div class="learn-home-grid">
         ${[["reading", "book", "green", "Reading"], ["writing", "pen", "violet", "Writing"], ["speaking", "mic", "red", "Speaking"], ["listening", "head", "blue", "Listening"]].map(([id, icon, tone, name]) => `<a class="lh g-${tone}" href="${url("learn")}?mod=${id}" data-act="learnmod" data-v="${id}"><span class="ico t-${tone}">${ic(icon)}</span><span class="body"><b>${name}</b><small>${id === "listening" ? "Today's lesson" : "Module"}</small></span></a>`).join("")}
-        <a class="lh-today" href="${url("listening-map")}"><span class="ico t-blue">${ic("map")}</span><span><b>Today · Listening Map</b><small>Farm map · questions 15–20${store.get("mmi-maplesson", null)?.score != null ? ` · last score ${store.get("mmi-maplesson").score}/6` : ""}</small></span><span class="go">${ic("arrow")}</span></a>
+        <a class="lh-today" href="${url("listening-map")}"><span class="ico t-blue">${ic("map")}</span><span><b>Listening maps</b><small>${esc(mapLessonHomeLine())}</small></span><span class="go">${ic("arrow")}</span></a>
       </div>
     </section>
     <section class="card learn-summary">

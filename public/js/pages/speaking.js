@@ -1,5 +1,5 @@
 import { D, S, store, ic, esc, ext, hero, crumb, lizBtn, shell, mmss, api, isTicked, todayDone, weekPct } from "../core.js?v=5";
-import { learnFinish } from "./learn.js?v=6";
+import { learnFinish } from "./learn.js?v=8";
 
 export const rec = { on: false, secs: 0, answers: [], mr: null, stream: null, timer: null, msg: "" };
 function wave() {

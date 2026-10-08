@@ -1,5 +1,5 @@
 import { D, S, store, hero, crumb, ic, esc, lizBtn, ico, shell, weekPct, isTicked, todayDone, url } from "../core.js?v=5";
-import { learnFinish } from "./learn.js?v=6";
+import { learnFinish } from "./learn.js?v=8";
 
 export const wc = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 function taskCard(cls, title, sub, icon, tone, list, cur, act, target, link, yt, ytLabel) {

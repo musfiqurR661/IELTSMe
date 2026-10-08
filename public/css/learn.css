@@ -73,6 +73,17 @@ button.mod.on { box-shadow: 0 0 0 2px var(--brand2); }
   border: 1px solid var(--line); border-radius: 14px; object-fit: contain;
 }
 .map-view img { width: min(100%, 440px); max-height: 480px; }
+.map-view.roomy img { width: min(100%, 680px); max-height: none; }
+.lesson-pager { justify-content: flex-start; margin-top: 4px; }
+.pager a, .pager span {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; height: 36px; padding: 0 10px; border-radius: 10px;
+  border: 1px solid var(--line); background: #fff; font-weight: 800; font-size: .8rem;
+  color: var(--ink); text-decoration: none;
+}
+.pager a.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.pager span.off { opacity: .4; }
+.map-lessons { display: grid; gap: 10px; }
 .map-view figcaption, .map-sheet figcaption { margin-top: 8px; font-size: .78rem; color: var(--muted); font-weight: 650; }
 .map-view figcaption { max-width: 36rem; text-align: center; }
 .map-sheet { position: sticky; top: 84px; }
