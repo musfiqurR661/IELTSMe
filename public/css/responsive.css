@@ -127,9 +127,11 @@
   .cat-bar { grid-template-columns: 1fr 1fr; }
   .hero { padding: 24px 18px; }
   .map-hero { grid-template-columns: 1fr; }
-  .foot { flex-direction: column; padding: 14px 16px; }
+  .foot { flex-direction: column; padding: 14px 16px 60px; }
+  .suggest { right: 12px; bottom: 12px; }
   .brand { min-width: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nav, .nav-scrim, .nav-toggle span { transition: none; }
+  .nav, .nav-scrim, .nav-toggle span, .suggest-tip { transition: none; }
+  .suggest-btn::before, .suggest-btn::after { animation: none; }
 }

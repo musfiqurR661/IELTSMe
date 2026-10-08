@@ -66,7 +66,7 @@ function layout(page) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;650&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css?v=49">
+  <link rel="stylesheet" href="/css/site.css?v=53">
 </head>
 <body data-page="${page}">
   <header class="topbar">
@@ -107,12 +107,31 @@ function layout(page) {
     <span>Made by <a href="https://musfiq.tech" target="_blank" rel="noopener"><b>MUSFIQ</b></a></span>
   </footer>
 
+  <div class="suggest" id="suggest">
+    <p class="suggest-tip" id="suggest-tip" role="tooltip">Have suggestions or need to report an issue? Email me at musfiqurm661@gmail.com</p>
+    <form class="suggest-card" id="suggest-form" data-form="suggest" hidden>
+      <div class="suggest-head">
+        <b>Suggestion or report</b>
+        <button type="button" data-act="suggest-close" aria-label="Close">×</button>
+      </div>
+      <p>Have suggestions or need to report an issue? Email me at musfiqurm661@gmail.com</p>
+      <label class="field">Your name<input name="name" required maxlength="80" autocomplete="name" placeholder="Your name"></label>
+      <label class="field">Your Email<input name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@gmail.com"></label>
+      <label class="field">Suggestion/Report<textarea name="message" required maxlength="1200" rows="4"></textarea></label>
+      <input class="suggest-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn solid block" type="submit">Send</button>
+    </form>
+    <button class="suggest-btn" type="button" data-act="suggest" aria-expanded="false" aria-controls="suggest-form" aria-describedby="suggest-tip" aria-label="Suggestions or report an issue">
+      <img src="/img/musfiq.png" alt="" width="28" height="28">
+    </button>
+  </div>
+
   <div id="modal" class="modal" hidden></div>
 
   <script src="/js/vocab.js?v=3"></script>
   <script src="/js/stickers.js?v=3"></script>
   <script src="/js/data.js?v=1"></script>
-  <script type="module" src="/js/app.js?v=33"></script>
+  <script type="module" src="/js/app.js?v=34"></script>
 </body>
 </html>`;
 }

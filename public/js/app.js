@@ -77,6 +77,56 @@ function toast(msg) {
   const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
 }
 
+function closeSuggest() {
+  const box = document.getElementById("suggest");
+  const form = document.getElementById("suggest-form");
+  const btn = document.querySelector(".suggest-btn");
+  if (!box || !form || form.hidden) return;
+  form.hidden = true;
+  box.classList.remove("is-open");
+  if (btn) btn.setAttribute("aria-expanded", "false");
+}
+function openSuggest() {
+  const box = document.getElementById("suggest");
+  const form = document.getElementById("suggest-form");
+  const btn = document.querySelector(".suggest-btn");
+  if (!box || !form) return;
+  form.hidden = false;
+  box.classList.add("is-open");
+  if (btn) btn.setAttribute("aria-expanded", "true");
+  form.querySelector("input[name='name']")?.focus();
+}
+async function sendSuggest(form) {
+  const data = Object.fromEntries(new FormData(form));
+  const send = form.querySelector("[type='submit']");
+  if (data._honey) { form.reset(); closeSuggest(); toast("Sent. Thank you."); return; }
+  if (send) send.disabled = true;
+  try {
+    const res = await fetch("https://formsubmit.co/ajax/musfiqurm661@gmail.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+        _replyto: data.email,
+        _subject: "IELTSMee suggestion or report",
+        _template: "table",
+        _captcha: "false"
+      })
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || body.success === false || body.success === "false") throw new Error("send");
+    form.reset();
+    closeSuggest();
+    toast("Sent. Thank you.");
+  } catch {
+    toast("Could not send. Email musfiqurm661@gmail.com instead.");
+  } finally {
+    if (send) send.disabled = false;
+  }
+}
+
 /* ---------- router ---------- */
 const PAGES = { home: pageHome, learn: pageLearn, "listening-map": pageListeningMap, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
 const TAB = { learn: "learn", "listening-map": "learn", map: "listening", words: "listening", essays: "writing", mistakes: "resources", notes: "resources" };
@@ -150,6 +200,7 @@ function setNav(open) {
 
 /* ---------- events ---------- */
 document.addEventListener("click", (e) => {
+  if (!e.target.closest(".suggest")) closeSuggest();
   if (e.target.closest(".nav a")) setNav(false);
   const skill = e.target.closest("a.skill");
   const arrow = e.target.closest(".go");
@@ -170,6 +221,8 @@ document.addEventListener("click", (e) => {
     case "search": setNav(false); openSearch(); return;
     case "nav": setNav(!document.body.classList.contains("nav-open")); return;
     case "nav-close": setNav(false); return;
+    case "suggest": { const form = document.getElementById("suggest-form"); form && form.hidden ? openSuggest() : closeSuggest(); return; }
+    case "suggest-close": closeSuggest(); return;
     case "close": closeModal(); return;
     case "say": say(v); return;
     case "scroll": { e.preventDefault(); const t = document.getElementById(v); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
@@ -282,6 +335,7 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !modal.hidden) closeModal();
   else if (e.key === "Escape" && document.body.classList.contains("nav-open")) setNav(false);
+  else if (e.key === "Escape") closeSuggest();
   if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".place")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
   if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && modal.hidden) { e.preventDefault(); openSearch(); }
 });
@@ -315,6 +369,7 @@ document.addEventListener("submit", (e) => {
   if (kind === "passage") { const l = store.get("mmi-passages", []); l.unshift({ title: d.title.trim(), level: d.level, date: today() }); store.set("mmi-passages", l); }
   if (kind === "mistake") { const l = store.get("mmi-mistakes", []); l.unshift({ skill: d.skill, wrong: d.wrong.trim(), right: d.right.trim(), date: today() }); store.set("mmi-mistakes", l); }
   if (kind === "learnlog") { const err = saveLearnLog(d.module, d.date, d.note); if (err) { toast(err); return; } toast("Learning note saved."); }
+  if (kind === "suggest") { sendSuggest(f); return; }
   if (kind === "addbook") {
     if (!/^https?:\/\//i.test(d.href)) { toast("Use a link that starts with https://"); return; }
     const l = mybooks(); l.push({ t: d.t.trim(), href: d.href.trim() }); store.set("mmi-mybooks", l); closeModal();
