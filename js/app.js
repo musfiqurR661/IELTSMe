@@ -1,17 +1,17 @@
 /* Router, search, quiz, timer, and page actions. */
 import {
-  D, W, app, modal, api, esc, ic, store, S, learned, wordById, GCOL, today, toggleTick, mmss
-} from "./core.js?v=3";
-import { pageHome } from "./pages/home.js?v=11";
-import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=9";
-import { pageLearn, pageListeningMap, noteBoard, learnState, mapTry, submitMapLesson, resetMapLesson } from "./pages/learn.js?v=2";
+  D, W, app, modal, api, esc, ic, store, S, learned, wordById, GCOL, today, toggleTick, mmss, PAGE_FILE, url
+} from "./core.js?v=5";
+import { pageHome } from "./pages/home.js?v=14";
+import { pageListening, topicGridHtml, topicWordsHtml } from "./pages/listening.js?v=13";
+import { pageLearn, pageListeningMap, noteBoard, learnState, mapTry, submitMapLesson, resetMapLesson, saveLearnLog } from "./pages/learn.js?v=6";
 import { TOPICS, wordHit } from "./topic-words.js?v=1";
-import { pageMap, pageWords, say } from "./pages/map.js?v=3";
-import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=3";
-import { pageReading } from "./pages/reading.js?v=3";
-import { pageWriting, pageEssays, wc } from "./pages/writing.js?v=4";
-import { pageBooks, booksGrid, mybooks, allBooks } from "./pages/books.js?v=2";
-import { pageResources, pageMistakes, pageNotes } from "./pages/resources.js?v=2";
+import { pageMap, pageWords, say } from "./pages/map.js?v=5";
+import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=6";
+import { pageReading } from "./pages/reading.js?v=6";
+import { pageWriting, pageEssays, wc } from "./pages/writing.js?v=7";
+import { pageBooks, booksGrid, mybooks, allBooks } from "./pages/books.js?v=4";
+import { pageResources, pageMistakes, pageNotes } from "./pages/resources.js?v=4";
 
 let timerId = null;
 function openModal(html) { modal.innerHTML = `<div class="modal-box" role="dialog" aria-modal="true">${html}</div>`; modal.hidden = false; document.body.style.overflow = "hidden"; }
@@ -22,7 +22,7 @@ function openSearch() {
 }
 function searchRender(q) {
   q = q.trim().toLowerCase(); const out = [];
-  const pages = [["Home", "#home"], ["My Learning", "#learn"], ["Listening Map", "#listening-map"], ["Listening", "#listening"], ["Map vocabulary", "#map"], ["My words", "#words"], ["Speaking", "#speaking"], ["Reading", "#reading"], ["Writing", "#writing"], ["Books", "#books"], ["Resources", "#resources"], ["My mistakes", "#mistakes"], ["Notes", "#notes"], ["My essays", "#essays"]];
+  const pages = [["Home", url("home")], ["My Learning", url("learn")], ["Listening Map", url("listening-map")], ["Listening", url("listening")], ["Map vocabulary", url("map")], ["My words", url("words")], ["Speaking", url("speaking")], ["Reading", url("reading")], ["Writing", url("writing")], ["Books", url("books")], ["Resources", url("resources")], ["My mistakes", url("mistakes")], ["Notes", url("notes")], ["My essays", url("essays")]];
   if (!q) { pages.forEach(([n, h]) => out.push({ k: "Page", t: n, h })); }
   else {
     pages.filter(([n]) => n.toLowerCase().includes(q)).forEach(([n, h]) => out.push({ k: "Page", t: n, h }));
@@ -81,8 +81,27 @@ function toast(msg) {
 const PAGES = { home: pageHome, learn: pageLearn, "listening-map": pageListeningMap, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
 const TAB = { learn: "learn", "listening-map": "learn", map: "listening", words: "listening", essays: "writing", mistakes: "resources", notes: "resources" };
 const TITLE = { home: "IELTSMee", learn: "My Learning · IELTSMee", "listening-map": "Listening Map · IELTSMee" };
-const routeName = () => { const r = (location.hash || "#home").slice(1).split("?")[0]; return PAGES[r] ? r : "home"; };
+const routeName = () => { const r = document.body.dataset.page || "home"; return PAGES[r] ? r : "home"; };
 let lastRoute = "";
+function saveView() {
+  try {
+    sessionStorage.setItem("mmi-view", JSON.stringify({
+      S: { ...S },
+      learn: { mod: learnState.mod, group: learnState.group, day: learnState.day },
+      mapTry: { picks: mapTry.picks, result: mapTry.result }
+    }));
+  } catch (e) { /* private mode */ }
+}
+function restoreView() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem("mmi-view") || "null");
+    if (!v) return;
+    if (v.S) Object.assign(S, v.S);
+    if (v.learn) Object.assign(learnState, v.learn);
+    if (v.mapTry) { mapTry.picks = v.mapTry.picks || {}; mapTry.result = v.mapTry.result || null; }
+  } catch (e) { /* ignore a bad snapshot */ }
+}
+function visit(href) { saveView(); location.href = href; }
 function render() {
   const r = routeName(); const y = window.scrollY;
   if (lastRoute === "speaking" && r !== "speaking") recAbort();
@@ -90,8 +109,15 @@ function render() {
   document.querySelectorAll(".nav a[data-tab]").forEach((a) => a.classList.toggle("on", a.dataset.tab === (TAB[r] || r)));
   const L = learned().size; const wc2 = document.getElementById("words-count"); if (wc2) wc2.textContent = L ? L : "";
   document.title = TITLE[r] || `${r.charAt(0).toUpperCase() + r.slice(1)} · IELTSMee`;
-  if (r !== lastRoute) window.scrollTo(0, 0); else window.scrollTo(0, y);
+  if (r !== lastRoute) {
+    const words = r === "listening" && S.listenTopic ? document.getElementById("topic-words") : null;
+    const id = location.hash.replace(/^#/, "").split("?")[0];
+    const t = words || (id && document.getElementById(id));
+    if (t) t.scrollIntoView({ block: "start" });
+    else window.scrollTo(0, 0);
+  } else window.scrollTo(0, y);
   lastRoute = r;
+  saveView();
   armMotive(r);
 }
 let motiveTimer = 0;
@@ -125,7 +151,7 @@ document.addEventListener("click", (e) => {
     skill.classList.add("is-go");
     const href = skill.getAttribute("href");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setTimeout(() => { location.hash = href; }, reduce ? 0 : 460);
+    setTimeout(() => { visit(href); }, reduce ? 0 : 460);
     return;
   }
   const open = e.target.closest("[data-open]");
@@ -139,7 +165,7 @@ document.addEventListener("click", (e) => {
     case "nav-close": setNav(false); return;
     case "close": closeModal(); return;
     case "say": say(v); return;
-    case "scroll": { const t = document.getElementById(v); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    case "scroll": { e.preventDefault(); const t = document.getElementById(v); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     case "learn": { const L = learned(); const id = +v; L.has(id) ? L.delete(id) : L.add(id); store.set("mmi-learned", [...L]); render(); return; }
     case "place": case "pick": { const w = wordById(+v); S.mapWord = w.id; S.mapGroup = w.g; S.mapPage = Math.floor(W.filter((x) => x.g === w.g).findIndex((x) => x.id === w.id) / 8); render(); return; }
     case "mapgroup": S.mapGroup = v; S.mapPage = 0; S.mapWord = W.find((w) => w.g === v).id; render(); return;
@@ -182,7 +208,7 @@ document.addEventListener("click", (e) => {
       if (!S.draft.trim()) { toast("Write something first."); return; }
       const l = store.get("mmi-essays", []); l.unshift({ title: S.draftTitle, type: S.draftType, text: S.draft, words: wc(S.draft), date: today() }); store.set("mmi-essays", l); toast("Essay saved."); render(); return;
     }
-    case "loadessay": { const x = store.get("mmi-essays", [])[+v]; S.draft = x.text; S.draftTitle = x.title; S.draftType = x.type; location.hash = "#writing"; return; }
+    case "loadessay": { const x = store.get("mmi-essays", [])[+v]; S.draft = x.text; S.draftTitle = x.title; S.draftType = x.type; visit(url("writing")); return; }
     case "delessay": { const l = store.get("mmi-essays", []); l.splice(+v, 1); store.set("mmi-essays", l); render(); return; }
     case "delpassage": { const l = store.get("mmi-passages", []); l.splice(+v, 1); store.set("mmi-passages", l); render(); return; }
     case "delmistake": { const l = store.get("mmi-mistakes", []); l.splice(+v, 1); store.set("mmi-mistakes", l); render(); return; }
@@ -192,7 +218,7 @@ document.addEventListener("click", (e) => {
     case "bookmark": { const m = store.get("mmi-bookmarks", []); const i = m.indexOf(v); i < 0 ? m.push(v) : m.splice(i, 1); store.set("mmi-bookmarks", m); render(); return; }
     case "addbook": openAddBook(); return;
     case "delmybook": { const l = mybooks(); l.splice(+v, 1); store.set("mmi-mybooks", l); render(); return; }
-    case "learnmod": learnState.mod = v; if (routeName() === "learn") render(); return;
+    case "learnmod": learnState.mod = v; saveView(); if (routeName() === "learn") render(); return;
     case "notegroup": {
       learnState.group = v;
       document.querySelectorAll("[data-act='notegroup']").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
@@ -232,14 +258,14 @@ document.addEventListener("click", (e) => {
         S.topicQ = "";
         S.topicCat = "All";
         const jump = () => document.getElementById("topic-words")?.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (location.hash === "#listening") { render(); setTimeout(jump, 60); }
-        else { location.hash = "#listening"; setTimeout(jump, 90); }
+        if (routeName() === "listening") { render(); setTimeout(jump, 60); }
+        else visit(url("listening") + "#topics");
         return;
       }
       if (r.ext) window.open(r.ext, "_blank", "noopener");
-      else if (r.word) { const w = wordById(r.word); S.mapWord = w.id; S.mapGroup = w.g; S.mapPage = Math.floor(W.filter((x) => x.g === w.g).findIndex((x) => x.id === w.id) / 8); location.hash === "#map" ? render() : (location.hash = "#map"); }
-      else if (r.cue !== undefined) { S.cue = r.cue; location.hash === "#speaking" ? render() : (location.hash = "#speaking"); }
-      else location.hash = r.h;
+      else if (r.word) { const w = wordById(r.word); S.mapWord = w.id; S.mapGroup = w.g; S.mapPage = Math.floor(W.filter((x) => x.g === w.g).findIndex((x) => x.id === w.id) / 8); routeName() === "map" ? render() : visit(url("map")); }
+      else if (r.cue !== undefined) { S.cue = r.cue; routeName() === "speaking" ? render() : visit(url("speaking")); }
+      else visit(r.h);
       return;
     }
     default:
@@ -270,6 +296,7 @@ document.addEventListener("input", (e) => {
   else if (t.id === "book-q") { S.bookQ = t.value; document.getElementById("book-grid").innerHTML = booksGrid(); }
   else if (t.id === "draft") { S.draft = t.value; const n = wc(S.draft), tg = S.draftType === "Task 1" ? 150 : 250; document.getElementById("draft-wc").textContent = `${n} words`; const el = document.getElementById("draft-target"); el.textContent = n >= tg ? "Target reached" : `${tg - n} to reach ${tg}`; el.className = n >= tg ? "c-green" : ""; }
   else if (t.id === "draft-title") S.draftTitle = t.value;
+  else if (t.id === "learn-date") { learnState.day = /^\d{4}-\d{2}-\d{2}$/.test(t.value) ? t.value : today(); render(); }
   else if (t.id === "notes") store.set("mmi-notes", t.value);
   else if (t.dataset.self) { const s = store.get("mmi-self", { fluency: 3, vocab: 3, grammar: 3, pron: 3 }); s[t.dataset.self] = +t.value; store.set("mmi-self", s); document.getElementById("self-" + t.dataset.self).textContent = `${t.value}/5`; }
   else if (t.dataset.bookprog) { const p = store.get("mmi-bookprog", {}); p[t.dataset.bookprog] = +t.value; store.set("mmi-bookprog", p); document.getElementById("bp-" + t.dataset.bookprog).textContent = `${t.value}%`; }
@@ -279,6 +306,7 @@ document.addEventListener("submit", (e) => {
   const d = Object.fromEntries(new FormData(f)); const kind = f.dataset.form;
   if (kind === "passage") { const l = store.get("mmi-passages", []); l.unshift({ title: d.title.trim(), level: d.level, date: today() }); store.set("mmi-passages", l); }
   if (kind === "mistake") { const l = store.get("mmi-mistakes", []); l.unshift({ skill: d.skill, wrong: d.wrong.trim(), right: d.right.trim(), date: today() }); store.set("mmi-mistakes", l); }
+  if (kind === "learnlog") { const err = saveLearnLog(d.module, d.date, d.note); if (err) { toast(err); return; } toast("Learning note saved."); }
   if (kind === "addbook") {
     if (!/^https?:\/\//i.test(d.href)) { toast("Use a link that starts with https://"); return; }
     const l = mybooks(); l.push({ t: d.t.trim(), href: d.href.trim() }); store.set("mmi-mybooks", l); closeModal();
@@ -286,7 +314,22 @@ document.addEventListener("submit", (e) => {
   render();
 });
 api.render = render;
-window.addEventListener("hashchange", () => { setNav(false); if (!modal.hidden) closeModal(); render(); });
+window.addEventListener("hashchange", () => {
+  setNav(false);
+  if (!modal.hidden) closeModal();
+  const id = location.hash.replace(/^#/, "").split("?")[0];
+  const t = id && document.getElementById(id);
+  if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+window.addEventListener("pagehide", saveView);
 window.addEventListener("resize", () => { if (window.matchMedia("(min-width: 1041px)").matches) setNav(false); });
-setNav(false);
-render();
+const here = document.body.dataset.page || "home";
+const legacy = (location.hash || "").replace(/^#/, "").split("?")[0];
+if (legacy && PAGE_FILE[legacy] && legacy !== here) location.replace(url(legacy));
+else {
+  restoreView();
+  const mod = new URLSearchParams(location.search).get("mod");
+  if (["reading", "writing", "speaking", "listening"].includes(mod)) learnState.mod = mod;
+  setNav(false);
+  render();
+}

@@ -1,4 +1,4 @@
-import { D, W, G, S, esc, ic, hero, crumb, shell, learned, wordById, GCOL, ext } from "../core.js?v=3";
+import { D, W, G, S, esc, ic, hero, crumb, shell, learned, wordById, GCOL, ext, url } from "../core.js?v=5";
 import { listenMenu } from "./listening.js";
 
 const PLACES = [
@@ -62,12 +62,12 @@ export function pageMap() {
     ["This set", list.length, "book", "green", "map-list"],
     ["Learned here", gl, "heart", "red", "map-list"],
     ["All learned", L.size, "star", "violet", "words"]
-  ].map(([name, n, icon, tone, id]) => `<a class="pg pg-${tone}" href="${id === "words" ? "#words" : "#map"}" ${id === "words" ? "" : `data-act="scroll" data-v="${id}"`}><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
+  ].map(([name, n, icon, tone, id]) => `<a class="pg pg-${tone}" href="${id === "words" ? url("words") : "#" + id}" ${id === "words" ? "" : `data-act="scroll" data-v="${id}"`}><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
   const tipIcon = ["globe", "pin", "map", "arrow", "vol"];
   const tipTone = ["blue", "violet", "green", "orange", "teal"];
   const tips = D.tips.map.map((t, i) => `<li><span class="ico t-${tipTone[i] || "blue"}">${ic(tipIcon[i] || "bulb")}</span><span>${esc(t)}</span></li>`).join("");
   const main = `
-    ${hero({ cls: "map wide", photo: true, crumb: `<a href="#home">Home</a> › <a href="#listening">Listening</a> › Map vocabulary`, title: "Map vocabulary", icon: "map", tone: "blue", tag: `${W.length} words with pictures and Bangla`, sub: "Tap a place on the town map, or choose a category and study the word card.", actions: `<button type="button" class="btn solid" data-act="quiz" data-v="${g.id}">${ic("target")}Quiz this set</button><a class="btn" href="#words">${ic("heart")}My words</a>` })}
+    ${hero({ cls: "map wide", photo: true, crumb: `<a href="${url("home")}">Home</a> › <a href="${url("listening")}">Listening</a> › Map vocabulary`, title: "Map vocabulary", icon: "map", tone: "blue", tag: `${W.length} words with pictures and Bangla`, sub: "Tap a place on the town map, or choose a category and study the word card.", actions: `<button type="button" class="btn solid" data-act="quiz" data-v="${g.id}">${ic("target")}Quiz this set</button><a class="btn" href="${url("words")}">${ic("heart")}My words</a>` })}
     <section class="card home-progress listen-stats">
       <div class="section-head"><h2>${ic("chart")}This set</h2><span class="more">${esc(g.title)}</span></div>
       <div class="pg-row">${stats}</div>
@@ -107,7 +107,7 @@ export function pageWords() {
   const L = learned();
   const all = W.filter((w) => L.has(w.id) && (S.wordGroup === "All" || w.g === S.wordGroup));
   const main = `
-    ${hero({ scene: "listening", crumb: `${crumb("Listening")} › My words`, title: "My Words", icon: "heart", tone: "red", sub: `You marked ${L.size} of ${W.length} map words as learned. Mark more with the heart on any word card.`, actions: `<button type="button" class="btn solid" data-act="quiz" data-v="mine">${ic("target")}Quiz my words</button><a class="btn" href="#map">${ic("map")}Browse map words</a>` })}
+    ${hero({ scene: "listening", crumb: `${crumb("Listening")} › My words`, title: "My Words", icon: "heart", tone: "red", sub: `You marked ${L.size} of ${W.length} map words as learned. Mark more with the heart on any word card.`, actions: `<button type="button" class="btn solid" data-act="quiz" data-v="mine">${ic("target")}Quiz my words</button><a class="btn" href="${url("map")}">${ic("map")}Browse map words</a>` })}
     <section class="card"><div class="pills"><button type="button" class="pill ${S.wordGroup === "All" ? "on" : ""}" data-act="wordgroup" data-v="All">All</button>${G.map((g) => `<button type="button" class="pill ${S.wordGroup === g.id ? "on" : ""}" data-act="wordgroup" data-v="${g.id}">${esc(g.title)}</button>`).join("")}</div></section>
     ${all.length ? `<div class="two">${all.map((w) => `<div class="item" style="grid-template-columns:70px 1fr auto"><div class="vc-pic" style="width:70px;height:56px">${window.MMIStickers.render(w.pic, GCOL[w.g])}</div><div><b>${esc(w.t)}</b><div class="bn">${esc(w.bn)}</div><small>${esc(w.s[0])}</small></div><div><button class="say" type="button" data-act="say" data-v="${esc(w.t)}" aria-label="Pronounce">${ic("vol")}</button> <button class="del" type="button" data-act="learn" data-v="${w.id}" aria-label="Remove">${ic("x")}</button></div></div>`).join("")}</div>`
       : `<div class="empty"><b>No words yet</b>Open the map vocabulary and tap the heart on a word to save it here.</div>`}`;

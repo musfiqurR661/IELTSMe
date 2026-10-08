@@ -1,7 +1,7 @@
 /* My Learning: four modules, today's Listening Map lesson, picture notes, and checked practice. */
-import { esc, ic, hero, shell, store, today } from "../core.js?v=3";
+import { esc, ic, hero, shell, store, today, url } from "../core.js?v=5";
 
-export const learnState = { mod: "listening", group: "all" };
+export const learnState = { mod: "listening", group: "all", day: today() };
 export const mapTry = { picks: {}, result: null };
 
 const DAY = "8 October 2026";
@@ -390,30 +390,86 @@ export function resetMapLesson() {
   mapTry.result = null;
 }
 
+const GO = {
+  reading: ["book", "green", "Reading", url("reading"), "Question types and a passage."],
+  writing: ["pen", "violet", "Writing", url("writing"), "Task 1, Task 2, then your draft."],
+  speaking: ["mic", "red", "Speaking", url("speaking"), "A cue card and a short recording."],
+  listening: ["head", "blue", "Listening", url("listening-map"), "The farm map, picture notes, then the audio."]
+};
+export const learnLogs = () => store.get("mmi-learnlog", []);
+export function saveLearnLog(module, date, note) {
+  if (!GO[module]) return "Pick a module.";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return "Pick a date.";
+  const text = String(note || "").trim().slice(0, 280);
+  if (!text) return "Write what you did.";
+  const l = learnLogs();
+  const row = { date, module, note: text, saved: new Date().toISOString() };
+  const i = l.findIndex((x) => x.date === date && x.module === module);
+  if (i >= 0) l[i] = row; else l.unshift(row);
+  l.sort((a, b) => b.date.localeCompare(a.date));
+  store.set("mmi-learnlog", l);
+  return "";
+}
+function prettyDate(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return iso;
+  return new Date(y, m - 1, d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+function learnDay() {
+  const q = new URLSearchParams(location.search).get("learn");
+  return q && /^\d{4}-\d{2}-\d{2}$/.test(q) ? q : (learnState.day || today());
+}
+export function learnSummary(limit = 5, module = "", date = "") {
+  let rows = learnLogs().slice();
+  if (module) rows = rows.filter((r) => r.module === module);
+  if (date) rows = rows.filter((r) => r.date === date);
+  rows = rows.slice(0, limit);
+  if (!rows.length) return `<div class="empty"><b>No learning notes yet</b>Pick a date and a module, study in that section, then write what you did.</div>`;
+  return `<div class="learn-log">${rows.map((r) => {
+    const [icon, tone, name] = GO[r.module] || ["cap", "violet", r.module];
+    return `<article class="learn-row g-${tone}"><span class="ico t-${tone}">${ic(icon)}</span><span><b>${esc(name)}</b><small>${esc(prettyDate(r.date))}</small></span><p>${esc(r.note)}</p></article>`;
+  }).join("")}</div>`;
+}
+export function learnFinish(module) {
+  const [icon, tone, name] = GO[module];
+  const day = learnDay();
+  const saved = learnLogs().find((x) => x.module === module && x.date === day);
+  return `<section class="card learn-finish" id="learn-done">
+    <div class="section-head"><h2>${ic("check")}After this ${esc(name)}</h2><span class="more">${esc(prettyDate(day))}</span></div>
+    <p class="note">When you finish, write what you did. Home and this section keep the note.</p>
+    <form class="learn-form" data-form="learnlog">
+      <input type="hidden" name="module" value="${module}">
+      <label class="field">Date<input type="date" name="date" value="${esc(day)}" required></label>
+      <label class="field">What I did<textarea name="note" required maxlength="280" placeholder="For example: I practised the farm map and checked questions 15–20.">${saved ? esc(saved.note) : ""}</textarea></label>
+      <button class="btn solid" type="submit">${ic("check")}${saved ? "Update feedback" : "Save feedback"}</button>
+    </form>
+    <div class="learn-past"><h3>${ic(icon)}Your ${esc(name)} notes</h3>${learnSummary(4, module)}</div>
+  </section>`;
+}
 function lessonPanel() {
-  const saved = savedScore();
-  if (learnState.mod !== "listening") {
-    const name = MODS.find((m) => m[0] === learnState.mod)[3];
-    return `<div class="empty"><b>No ${esc(name)} lesson yet</b>Today's lesson is in Listening.</div><button type="button" class="btn solid learn-jump" data-act="learnmod" data-v="listening">${ic("head")}Open today's Listening lesson</button>`;
-  }
-  return `<a class="lesson" href="#listening-map"><span class="ico t-blue">${ic("map")}</span><span class="lesson-copy"><b>Listening Map</b><small>Today · ${DAY} · Questions 15–20</small><span class="bn">ফার্মের ম্যাপ। ছবির নোট দেখো, তারপর অডিও শুনে A–I বসাও।</span></span>${saved ? `<em class="lesson-score">${saved.score}/${saved.total}</em>` : `<span class="lesson-go">${ic("arrow")}</span>`}</a>`;
+  const [icon, tone, name, dest, blurb] = GO[learnState.mod];
+  const day = learnState.day || today();
+  const saved = learnLogs().find((x) => x.module === learnState.mod && x.date === day);
+  return `<a class="lesson" href="${dest}?learn=${esc(day)}"><span class="ico t-${tone}">${ic(icon)}</span><span class="lesson-copy"><b>Start ${esc(name)}</b><small>${esc(prettyDate(day))} · ${esc(blurb)}</small><span>${saved ? esc(saved.note) : "Opens this section. Write what you did when you finish."}</span></span><span class="lesson-go">${ic("arrow")}</span></a>
+    <div class="learn-past"><h3>Notes on ${esc(prettyDate(day))}</h3>${learnSummary(4, "", day)}</div>`;
 }
 
 export function pageLearn() {
-  const mods = MODS.map(([id, icon, tone, name]) => `<button type="button" class="mod g-${tone} ${learnState.mod === id ? "on" : ""}" data-act="learnmod" data-v="${id}"><span class="ico t-${tone}">${ic(icon)}</span><span class="body"><b>${name}</b><small>${id === "listening" ? "1 lesson" : "No lesson yet"}</small></span></button>`).join("");
+  const mods = MODS.map(([id, icon, tone, name]) => `<button type="button" class="mod g-${tone} ${learnState.mod === id ? "on" : ""}" data-act="learnmod" data-v="${id}"><span class="ico t-${tone}">${ic(icon)}</span><span class="body"><b>${name}</b><small>${id === "listening" ? "Map lesson" : "Open section"}</small></span></button>`).join("");
   const main = `
     ${hero({
-      scene: "listening",
-      crumb: `<a href="#home">Home</a> › My Learning`,
+      cls: "listen wide", photo: true,
+      crumb: `<a href="${url("home")}">Home</a> › My Learning`,
       title: "My Learning",
       icon: "cap",
       tone: "violet",
       tag: "Reading · Writing · Speaking · Listening",
-      sub: "Your own lessons, one module at a time. Today is a listening map.",
-      actions: `<a class="btn solid" href="#listening-map">${ic("map")}Open today's lesson</a>`
+      sub: "Pick a date, choose one module, and study in that section. When you finish, write what you did.",
+      actions: `<button type="button" class="btn solid" data-act="scroll" data-v="learn-hub">${ic("cap")}Pick a module</button>`
     })}
-    <section class="card learn-hub">
+    <section class="card learn-hub" id="learn-hub">
       <div class="section-head"><h2>${ic("grid")}Four modules</h2><span class="more">R · W · S · L</span></div>
+      <label class="learn-date">${ic("cal")}Learn on<input id="learn-date" type="date" value="${esc(learnState.day || today())}"></label>
       <div class="mod-row">${mods}</div>
       <div class="mod-panel">${lessonPanel()}</div>
     </section>`;
@@ -423,8 +479,8 @@ export function pageLearn() {
 export function pageListeningMap() {
   const main = `
     ${hero({
-      scene: "listening",
-      crumb: `<a href="#home">Home</a> › <a href="#learn">My Learning</a> › Listening`,
+      cls: "listen wide", photo: true,
+      crumb: `<a href="${url("home")}">Home</a> › <a href="${url("learn")}">My Learning</a> › Listening`,
       title: "Listening Map",
       icon: "map",
       tone: "blue",
@@ -453,6 +509,7 @@ export function pageListeningMap() {
           ${practiceBody()}
         </div>
       </div>
-    </section>`;
+    </section>
+    ${learnFinish("listening")}`;
   return shell("l-main", "", main);
 }

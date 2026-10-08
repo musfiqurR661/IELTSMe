@@ -1,4 +1,5 @@
-import { D, S, store, hero, crumb, ic, esc, lizBtn, shell, weekPct, isTicked, todayDone } from "../core.js?v=3";
+import { D, S, store, hero, crumb, ic, esc, lizBtn, shell, weekPct, isTicked, todayDone } from "../core.js?v=5";
+import { learnFinish } from "./learn.js?v=6";
 
 export function pageReading() {
   const rt = D.readingTypes.find((t) => t.id === S.rtype) || D.readingTypes[0];
@@ -21,7 +22,7 @@ export function pageReading() {
     ["Themes", D.passageTypes.length, "book", "blue", "rd-pass"],
     ["Logged", log.length, "note", "violet", "rd-log"],
     ["This week", `${week}%`, "chart", "red", "rd-plan"]
-  ].map(([name, n, icon, pTone, id]) => `<a class="pg pg-${pTone}" href="#reading" data-act="scroll" data-v="${id}"><span class="ico t-${pTone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
+  ].map(([name, n, icon, pTone, id]) => `<a class="pg pg-${pTone}" href="#${id}" data-act="scroll" data-v="${id}"><span class="ico t-${pTone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
   const main = `
     ${hero({ cls: "read wide", photo: true, crumb: crumb("Reading"), title: "Reading", icon: "book", tone: "green", tag: "Read smarter. Score higher.", sub: "Learn how each question type works, then practise on real passages and log what you read.", actions: `<a class="btn solid" href="${esc(D.jump)}" target="_blank" rel="noopener">${ic("target")}Practice passages</a>${lizBtn(D.liz.reading, "IELTSLiz reading")}` })}
     <section class="card home-progress listen-stats">
@@ -29,6 +30,7 @@ export function pageReading() {
       <div class="pg-row">${stats}</div>
       <div class="pg-overall"><div class="plan-meter" style="--p:${week}"><b>${week}%</b></div><div><b>This week</b><p class="note">From the reading tasks you tick over the last 7 days. ${log.length} passage${log.length === 1 ? "" : "s"} in your log.</p></div></div>
     </section>
+    ${learnFinish("reading")}
     <section class="card" id="rd-types"><div class="section-head"><h2>${ic("list")}Question types</h2><p>Tap a type for its main tip.</p></div>
       <div class="type-grid">${D.readingTypes.map((t, i) => `<button type="button" class="type t-card-${"abcdef"[i]} ${t.id === rt.id ? "on" : ""}" data-act="rtype" data-v="${t.id}"><span class="ico t-${tone[i]}">${ic(typeIcon[i])}</span><span><b>${esc(t.name)}</b><small>${esc(t.tip)}</small></span></button>`).join("")}</div>
       <div class="detail"><span class="ico t-${tone[D.readingTypes.indexOf(rt)] || "green"}">${ic(typeIcon[D.readingTypes.indexOf(rt)] || "book")}</span><div><b>${esc(rt.name)}</b><p>${esc(rt.tip)}</p></div></div></section>

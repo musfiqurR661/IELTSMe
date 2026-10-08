@@ -1,12 +1,13 @@
-import { D, W, S, esc, ic, hero, crumb, lizBtn, shell, isTicked, todayDone, weekPct, learned, menu } from "../core.js?v=3";
+import { D, W, S, esc, ic, hero, crumb, lizBtn, shell, isTicked, todayDone, weekPct, learned, menu, store, url } from "../core.js?v=5";
 import { TOPICS, wordHit } from "../topic-words.js?v=1";
+import { learnFinish } from "./learn.js?v=6";
 
 const TOPIC_TONE = ["blue", "orange", "green", "violet", "pink", "gold", "teal", "red"];
 const inCat = (t) => S.topicCat === "All" || t.cat === S.topicCat;
 
 export const listenMenu = (on) => menu("Listening", "head", [
-  ["grid", "Overview", "#listening"], ["list", "Topic vocabulary", "#listening"], ["map", "Map vocabulary", "#map"], ["heart", "My words", "#words"],
-  ["target", "Practice tests", D.jump, "ext"], ["bulb", "IELTSLiz tips", D.liz.listening, "ext"], ["wrong", "My mistakes", "#mistakes"]
+  ["grid", "Overview", url("listening")], ["list", "Topic vocabulary", url("listening") + "#topics"], ["map", "Map vocabulary", url("map")], ["heart", "My words", url("words")],
+  ["target", "Practice tests", D.jump, "ext"], ["bulb", "IELTSLiz tips", D.liz.listening, "ext"], ["wrong", "My mistakes", url("mistakes")]
 ], on);
 function matchesTopic(t, q) {
   return !q || t.name.toLowerCase().includes(q) || t.words.some((w) => wordHit(w, q));
@@ -72,14 +73,25 @@ export function pageListening() {
   const stats = [
     ["Topics", TOPICS.length, "grid", "blue", "topics"],
     ["Topic words", total, "book", "green", "topics"],
-    ["Map words", W.length, "map", "violet", "#map"],
-    ["Learned", L, "heart", "red", "#words"]
+    ["Map words", W.length, "map", "violet", url("map")],
+    ["Learned", L, "heart", "red", url("words")]
   ].map(([name, n, icon, tone, href]) => {
     const jump = href === "topics";
-    return `<a class="pg pg-${tone}" href="${jump ? "#listening" : esc(href)}" ${jump ? 'data-act="jumptopics"' : ""}><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`;
+    return `<a class="pg pg-${tone}" href="${jump ? "#topics" : esc(href)}" ${jump ? 'data-act="jumptopics"' : ""}><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`;
   }).join("");
   const main = `
-    ${hero({ cls: "listen wide", photo: true, crumb: crumb("Listening"), title: "Listening", icon: "head", tone: "blue", tag: "Topic vocabulary and map words", sub: "Choose a topic to open its word list, or practise the map vocabulary with pictures and Bangla.", actions: `<a class="btn solid" href="#map">${ic("map")}Practice maps</a>${lizBtn(D.liz.listening, "IELTSLiz listening")}` })}
+    ${hero({ cls: "listen wide", photo: true, crumb: crumb("Listening"), title: "Listening", icon: "head", tone: "blue", tag: "Topic vocabulary and map words", sub: "Choose a topic to open its word list, or practise the map vocabulary with pictures and Bangla.", actions: `<a class="btn solid" href="${url("listening-map")}">${ic("map")}Today's lesson</a><a class="btn" href="${url("map")}">${ic("map")}Practice maps</a>` })}
+    <section class="card learn-hub">
+      <div class="section-head"><h2>${ic("head")}Listening</h2><a class="more" href="${url("learn")}">My Learning →</a></div>
+      <div class="mod-row">
+        <a class="mod g-blue" href="${url("listening-map")}"><span class="ico t-blue">${ic("map")}</span><span class="body"><b>Listening Map</b><small>Today's lesson</small></span></a>
+        <a class="mod g-violet" href="${url("map")}"><span class="ico t-violet">${ic("map")}</span><span class="body"><b>Map words</b><small>${W.length} with pictures</small></span></a>
+        <a class="mod g-green" href="#topics" data-act="jumptopics"><span class="ico t-green">${ic("book")}</span><span class="body"><b>Topic words</b><small>${total} words</small></span></a>
+        <a class="mod g-red" href="${url("words")}"><span class="ico t-red">${ic("heart")}</span><span class="body"><b>My words</b><small>${L} learned</small></span></a>
+      </div>
+      <div class="mod-panel"><a class="lesson" href="${url("listening-map")}"><span class="ico t-blue">${ic("map")}</span><span class="lesson-copy"><b>Listening Map</b><small>Today · Questions 15–20${store.get("mmi-maplesson", null)?.score != null ? ` · last score ${store.get("mmi-maplesson").score}/6` : ""}</small><span class="bn">ফার্মের ম্যাপ। ছবির নোট, তারপর অডিও।</span></span><span class="lesson-go">${ic("arrow")}</span></a></div>
+    </section>
+    ${learnFinish("listening")}
     <section class="card home-progress listen-stats">
       <div class="section-head"><h2>${ic("chart")}Your listening</h2><span class="more">this week</span></div>
       <div class="pg-row">${stats}</div>
@@ -98,20 +110,20 @@ export function pageListening() {
         <div class="plan-list">${planRows}</div>
       </div>
       <div class="card practice"><h3>${ic("target")}Quick practice</h3><div class="quick-grid">
-        <a class="quick q-blue" href="#map">${ic("map")}Map practice</a>
-        <a class="quick q-violet" href="#words">${ic("heart")}My words</a>
+        <a class="quick q-blue" href="${url("map")}">${ic("map")}Map practice</a>
+        <a class="quick q-violet" href="${url("words")}">${ic("heart")}My words</a>
         <a class="quick q-gold" href="${esc(D.jump)}" target="_blank" rel="noopener">${ic("target")}Practice tests</a>
-        <a class="quick q-red" href="#mistakes">${ic("wrong")}My mistakes</a>
+        <a class="quick q-red" href="${url("mistakes")}">${ic("wrong")}My mistakes</a>
       </div><div class="quote-chip">${ic("bulb")}<span>Listen once more. The answer is in the detail.</span></div></div>
-      <div class="card listen-spot"><h3>${ic("map")}Map vocabulary</h3><p>${W.length} words with pictures, Bangla and examples.</p><a class="btn solid" href="#map">Open maps</a></div>
+      <div class="card listen-spot"><h3>${ic("map")}Map vocabulary</h3><p>${W.length} words with pictures, Bangla and examples.</p><a class="btn solid" href="${url("map")}">Open maps</a></div>
     </div>
     <div class="two">
       <div class="card library"><h3>${ic("list")}Keep going</h3><div class="link-list">
-        <a class="g-blue" href="#listening-map"><span class="l"><span class="ico t-blue">${ic("map")}</span>Today · Listening Map</span>${ic("arrow", "ext")}</a>
-        <a class="g-violet" href="#map"><span class="l"><span class="ico t-violet">${ic("map")}</span>Map vocabulary</span>${ic("arrow", "ext")}</a>
-        <a class="g-red" href="#words"><span class="l"><span class="ico t-red">${ic("heart")}</span>My words</span>${ic("arrow", "ext")}</a>
-        <a class="g-orange" href="#mistakes"><span class="l"><span class="ico t-orange">${ic("wrong")}</span>My mistakes</span>${ic("arrow", "ext")}</a>
-        <a class="g-green" href="#listening" data-act="jumptopics"><span class="l"><span class="ico t-green">${ic("book")}</span>1200 Vocabulary Word List</span>${ic("arrow", "ext")}</a>
+        <a class="g-blue" href="${url("listening-map")}"><span class="l"><span class="ico t-blue">${ic("map")}</span>Today · Listening Map</span>${ic("arrow", "ext")}</a>
+        <a class="g-violet" href="${url("map")}"><span class="l"><span class="ico t-violet">${ic("map")}</span>Map vocabulary</span>${ic("arrow", "ext")}</a>
+        <a class="g-red" href="${url("words")}"><span class="l"><span class="ico t-red">${ic("heart")}</span>My words</span>${ic("arrow", "ext")}</a>
+        <a class="g-orange" href="${url("mistakes")}"><span class="l"><span class="ico t-orange">${ic("wrong")}</span>My mistakes</span>${ic("arrow", "ext")}</a>
+        <a class="g-green" href="#topics" data-act="jumptopics"><span class="l"><span class="ico t-green">${ic("book")}</span>1200 Vocabulary Word List</span>${ic("arrow", "ext")}</a>
       </div></div>
       <div class="card online"><h3>${ic("globe")}Practise online</h3><div class="site-list">
         <a class="site-box s-jump" href="${esc(D.jump)}" target="_blank" rel="noopener"><img src="img/logos/jumpinto.png" alt=""><span><b>Jumpinto</b><small>Practice tests</small></span>${ic("ext", "ext")}</a>

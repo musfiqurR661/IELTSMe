@@ -1,4 +1,5 @@
-import { D, S, store, ic, esc, ext, hero, crumb, lizBtn, shell, mmss, api, isTicked, todayDone, weekPct } from "../core.js?v=3";
+import { D, S, store, ic, esc, ext, hero, crumb, lizBtn, shell, mmss, api, isTicked, todayDone, weekPct } from "../core.js?v=5";
+import { learnFinish } from "./learn.js?v=6";
 
 export const rec = { on: false, secs: 0, answers: [], mr: null, stream: null, timer: null, msg: "" };
 function wave() {
@@ -31,7 +32,7 @@ export function pageSpeaking() {
     ["Cue cards", D.cueCards.length, "note", "violet", "sp-cue"],
     ["Self score", sAvg, "star", "green", "sp-cue"],
     ["Recordings", rec.answers.length, "vol", "blue", "sp-cue"]
-  ].map(([name, n, icon, tone, id]) => `<a class="pg pg-${tone}" href="#speaking" data-act="scroll" data-v="${id}"><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
+  ].map(([name, n, icon, tone, id]) => `<a class="pg pg-${tone}" href="#${id}" data-act="scroll" data-v="${id}"><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${n}</b></a>`).join("");
   const main = `
     ${hero({ cls: "speak wide", photo: true, crumb: crumb("Speaking"), title: "Speaking", icon: "mic", tone: "red", tag: "Practice. Record. Improve.", sub: "Pick a cue card, speak for two minutes and listen back. Rate yourself honestly after each take.", actions: `<button type="button" class="btn pink" data-act="timer">${ic("clock")}Start speaking timer</button>${lizBtn(D.liz.speaking, "IELTSLiz speaking")}` })}
     <section class="card home-progress listen-stats">
@@ -39,6 +40,7 @@ export function pageSpeaking() {
       <div class="pg-row">${stats}</div>
       <div class="pg-overall"><div class="plan-meter" style="--p:${week}"><b>${week}%</b></div><div><b>This week</b><p class="note">From the speaking tasks you tick over the last 7 days. Self-check average: ${sAvg} / 5.</p></div></div>
     </section>
+    ${learnFinish("speaking")}
     <div class="parts">${parts}</div>
     <div class="three" id="sp-cue">
       <section class="card cue-card"><div class="cue-top"><span class="ico t-red">${ic("note")}</span><h3>Cue card</h3><span class="cue-nav"><button type="button" data-act="cue" data-v="-1" aria-label="Previous">${ic("cl")}</button>${S.cue + 1} / ${D.cueCards.length}<button type="button" data-act="cue" data-v="1" aria-label="Next">${ic("cr")}</button></span></div>

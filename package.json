@@ -1,0 +1,14 @@
+{
+  "name": "ieltsmee",
+  "private": true,
+  "description": "IELTSMee study app",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

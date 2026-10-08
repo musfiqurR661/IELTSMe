@@ -1,4 +1,15 @@
 {
-  "framework": null,
-  "cleanUrls": false
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["css/**", "js/**", "img/**", "audio/**"]
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "server.js" }
+  ]
 }

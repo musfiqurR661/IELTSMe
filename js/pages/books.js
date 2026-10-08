@@ -1,4 +1,4 @@
-import { store, D, S, ic, ico, esc, ext, hero, crumb, shell } from "../core.js?v=3";
+import { store, D, S, ic, ico, esc, ext, hero, crumb, shell } from "../core.js?v=5";
 
 export const mybooks = () => store.get("mmi-mybooks", []);
 export const allBooks = () => [...D.books, ...mybooks().map((b, i) => ({ id: "my" + i, t: b.t, cat: "Other", href: b.href, meta: "My link", cover: ["#2f3a8f", "#7a85ee", "My book", b.t.slice(0, 22), "Added by me"], mine: i }))];

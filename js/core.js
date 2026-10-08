@@ -213,7 +213,13 @@ export function hero(o) {
     <div class="crumb">${o.crumb}</div><h1>${o.icon ? `<span class="c-${o.tone}">${ic(o.icon)}</span>` : ""}<span class="${o.plain ? "" : "grad"}">${esc(o.title)}</span></h1>
     ${o.tag ? `<p class="tag">${esc(o.tag)}</p>` : ""}<p class="sub">${esc(o.sub)}</p>${o.actions ? `<div class="hero-actions">${o.actions}</div>` : ""}${o.after || ""}</div>${o.right || ""}</section>`;
 }
-export const crumb = (name) => `<a href="#home">Home</a> › ${esc(name)}`;
+export const PAGE_FILE = {
+  home: "/", learn: "/learn", "listening-map": "/listening-map", listening: "/listening",
+  map: "/map", words: "/words", speaking: "/speaking", reading: "/reading", writing: "/writing",
+  essays: "/essays", books: "/books", resources: "/resources", mistakes: "/mistakes", notes: "/notes"
+};
+export const url = (name) => PAGE_FILE[name] || PAGE_FILE.home;
+export const crumb = (name) => `<a href="${url("home")}">Home</a> › ${esc(name)}`;
 export const shell = (cls, side, main, rail) => `<div class="page ${cls}">${side ? `<aside class="side">${side}</aside>` : ""}<div class="main">${main}</div>${rail ? `<aside class="rail">${rail}</aside>` : ""}</div>`;
 export const lizBtn = (href, label) => ext(href, `${ic("ext")}${esc(label)}`, 'class="btn"');
 
