@@ -1,13 +1,17 @@
 import { D, S, store, hero, crumb, ic, esc, lizBtn, ico, shell, weekPct, isTicked, todayDone, url } from "../core.js?v=5";
 import { learnFinish } from "./learn.js?v=8";
+import { task1NoteHtml } from "../task1-note.js?v=2";
+import { task1ExamplesHtml } from "../task1-examples.js?v=4";
+import { task2NoteHtml } from "../task2-note.js?v=2";
+import { task2ExamplesHtml } from "../task2-examples.js?v=2";
 
 export const wc = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 function taskCard(cls, title, sub, icon, tone, list, cur, act, target, link, yt, ytLabel) {
   const t = list.find((x) => x.id === cur) || list[0];
-  return `<section class="task-card ${cls}"><div class="task-head">${ico(icon, tone)}<div><h2>${title}</h2><p>${sub}</p></div></div>
+    return `<section class="task-card ${cls}"><div class="task-head">${ico(icon, tone)}<div><h2><a href="${cls === "t1" ? "/writing/task-1" : cls === "t2" ? "/writing/task-2" : "#"}">${title}</a></h2><p>${sub}</p></div></div>
     <div class="pills">${list.map((x) => `<button type="button" class="pill ${x.id === t.id ? "on" : ""}" data-act="${act}" data-v="${x.id}">${esc(x.name)}</button>`).join("")}</div>
     <div class="detail" style="background:#fff"><b>${esc(t.name)}</b><p style="margin:4px 0 8px">${esc(t.tip)}</p><ol>${t.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol><p class="note">Aim for at least ${target} words.</p></div>
-    <div class="hero-actions">${lizBtn(link, "IELTSLiz lessons")}${yt ? `<a class="btn yt" href="${esc(yt)}" target="_blank" rel="noopener"><img src="img/logos/youtube.svg" alt="">${esc(ytLabel)}</a>` : ""}</div></section>`;
+    <div class="hero-actions">${lizBtn(link, "IELTSLiz lessons")}${yt ? `<a class="btn yt" href="${esc(yt)}" target="_blank" rel="noopener"><img src="img/logos/youtube.svg" alt="">${esc(ytLabel)}</a>` : ""}${cls === "t1" || cls === "t2" ? `<a class="btn solid" href="${cls === "t1" ? "/writing/task-1" : "/writing/task-2"}">${ic("book")}${cls === "t1" ? "Task 1 note" : "20-day note"}</a><a class="btn" href="${cls === "t1" ? "/writing/task-1/examples" : "/writing/task-2/examples"}">${ic("note")}Examples</a>` : ""}</div></section>`;
 }
 export function pageWriting() {
   const ideas = D.ideas[S.ideaTopic];
@@ -30,7 +34,7 @@ export function pageWriting() {
     ["Draft", n, "edit", "red", "wr-editor"]
   ].map(([name, num, icon, tone, id]) => `<a class="pg pg-${tone}" href="${id === "essays" ? url("essays") : "#" + id}" ${id === "essays" ? "" : `data-act="scroll" data-v="${id}"`}><span class="ico t-${tone}">${ic(icon)}</span><span class="pg-name">${name}</span><b class="pg-num">${num}</b></a>`).join("");
   const main = `
-    ${hero({ cls: "write wide", photo: true, crumb: crumb("Writing"), title: "Writing", icon: "pen", tone: "violet", tag: "Plan. Write. Review.", sub: "Pick the task type, follow the four steps, then draft your own answer and count the words.", actions: `<button type="button" class="btn solid" data-act="scroll" data-v="wr-editor">${ic("edit")}Open the editor</button><a class="btn" href="${url("essays")}">${ic("note")}My essays</a>` })}
+    ${hero({ cls: "write wide", photo: true, crumb: crumb("Writing"), title: "Writing", icon: "pen", tone: "violet", tag: "Plan. Write. Review.", sub: "Task 1 is a report. Task 2 is an essay. Open a task for the full note, then draft your answer here.", actions: `<a class="btn solid" href="/writing/task-1">${ic("chart")}Task 1</a><a class="btn" href="/writing/task-2">${ic("book")}Task 2</a><a class="btn" href="${url("essays")}">${ic("note")}My essays</a>` })}
     <section class="card home-progress listen-stats">
       <div class="section-head"><h2>${ic("chart")}Your writing</h2><span class="more">${essays.length} saved</span></div>
       <div class="pg-row">${stats}</div>
@@ -53,6 +57,30 @@ export function pageWriting() {
         <div class="plan-list">${planRows}</div>
       </div>
     </div>`;
+  return shell("l-main", "", main);
+}
+function studyHero(tail, title, icon, tone, sub, actions) {
+  return hero({
+    cls: "write wide",
+    photo: true,
+    crumb: `<a href="${url("home")}">Home</a> › <a href="${url("writing")}">Writing</a> › ${esc(tail)}`,
+    title, icon, tone, sub, actions
+  });
+}
+export function pageWritingTask1() {
+  const main = `${studyHero("Task 1", "Task 1", "chart", "blue", "A report on a graph, chart, map or process. About 20 minutes, at least 150 words.", `<a class="btn solid" href="/writing/task-1/examples">${ic("note")}Examples</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task1NoteHtml()}`;
+  return shell("l-main", "", main);
+}
+export function pageWritingTask1Examples() {
+  const main = `${studyHero("Task 1 examples", "Task 1 examples", "chart", "blue", "Four Band 8+ reports. Line graphs and diagrams, with the picture beside the answer.", `<a class="btn solid" href="/writing/task-1">${ic("book")}Task 1 note</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task1ExamplesHtml()}`;
+  return shell("l-main", "", main);
+}
+export function pageWritingTask2() {
+  const main = `${studyHero("Task 2", "Task 2", "pen", "orange", "An essay in about 40 minutes. Aim for 260–280 words.", `<a class="btn solid" href="/writing/task-2/examples">${ic("note")}Examples</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task2NoteHtml()}`;
+  return shell("l-main", "", main);
+}
+export function pageWritingTask2Examples() {
+  const main = `${studyHero("Task 2 examples", "Task 2 examples", "pen", "orange", "Two Band 8+ essays, with each sentence marked and other wordings you can reuse.", `<a class="btn solid" href="/writing/task-2">${ic("book")}20-day note</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task2ExamplesHtml()}`;
   return shell("l-main", "", main);
 }
 export function pageEssays() {

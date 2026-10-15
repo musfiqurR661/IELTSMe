@@ -9,7 +9,11 @@ import { TOPICS, wordHit } from "./topic-words.js?v=1";
 import { pageMap, pageWords, say } from "./pages/map.js?v=5";
 import { pageSpeaking, rec, recStart, recStop, recAbort } from "./pages/speaking.js?v=8";
 import { pageReading } from "./pages/reading.js?v=8";
-import { pageWriting, pageEssays, wc } from "./pages/writing.js?v=9";
+import { pageWriting, pageWritingTask1, pageWritingTask1Examples, pageWritingTask2, pageWritingTask2Examples, pageEssays, wc } from "./pages/writing.js?v=16";
+import { setT1Tab } from "./task1-note.js?v=2";
+import { setT1Example } from "./task1-examples.js?v=4";
+import { setT2Tab, setT2Day, setT2Phase, toggleT2Day } from "./task2-note.js?v=2";
+import { setT2Example } from "./task2-examples.js?v=2";
 import { pageBooks, booksGrid, mybooks, allBooks } from "./pages/books.js?v=4";
 import { pageResources, pageMistakes, pageNotes } from "./pages/resources.js?v=4";
 
@@ -22,7 +26,7 @@ function openSearch() {
 }
 function searchRender(q) {
   q = q.trim().toLowerCase(); const out = [];
-  const pages = [["Home", url("home")], ["My Learning", url("learn")], ["Listening Map", url("listening-map")], ["Listening", url("listening")], ["Map vocabulary", url("map")], ["My words", url("words")], ["Speaking", url("speaking")], ["Reading", url("reading")], ["Writing", url("writing")], ["Books", url("books")], ["Resources", url("resources")], ["My mistakes", url("mistakes")], ["Notes", url("notes")], ["My essays", url("essays")]];
+  const pages = [["Home", url("home")], ["My Learning", url("learn")], ["Listening Map", url("listening-map")], ["Listening", url("listening")], ["Map vocabulary", url("map")], ["My words", url("words")], ["Speaking", url("speaking")], ["Reading", url("reading")], ["Writing", url("writing")], ["Task 1", "/writing/task-1"], ["Task 1 examples", "/writing/task-1/examples"], ["Task 2", "/writing/task-2"], ["Task 2 examples", "/writing/task-2/examples"], ["Books", url("books")], ["Resources", url("resources")], ["My mistakes", url("mistakes")], ["Notes", url("notes")], ["My essays", url("essays")]];
   if (!q) { pages.forEach(([n, h]) => out.push({ k: "Page", t: n, h })); }
   else {
     pages.filter(([n]) => n.toLowerCase().includes(q)).forEach(([n, h]) => out.push({ k: "Page", t: n, h }));
@@ -129,9 +133,9 @@ async function sendSuggest(form) {
 }
 
 /* ---------- router ---------- */
-const PAGES = { home: pageHome, learn: pageLearn, "listening-map": pageListeningMap, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
-const TAB = { learn: "learn", "listening-map": "learn", map: "listening", words: "listening", essays: "writing", mistakes: "resources", notes: "resources" };
-const TITLE = { home: "IELTSMee", learn: "My Learning · IELTSMee", "listening-map": "Listening Map · IELTSMee" };
+const PAGES = { home: pageHome, learn: pageLearn, "listening-map": pageListeningMap, listening: pageListening, map: pageMap, words: pageWords, speaking: pageSpeaking, reading: pageReading, writing: pageWriting, "writing-task-1": pageWritingTask1, "writing-task-1-examples": pageWritingTask1Examples, "writing-task-2": pageWritingTask2, "writing-task-2-examples": pageWritingTask2Examples, essays: pageEssays, books: pageBooks, resources: pageResources, mistakes: pageMistakes, notes: pageNotes };
+const TAB = { learn: "learn", "listening-map": "learn", map: "listening", words: "listening", essays: "writing", "writing-task-1": "writing", "writing-task-1-examples": "writing", "writing-task-2": "writing", "writing-task-2-examples": "writing", mistakes: "resources", notes: "resources" };
+const TITLE = { home: "IELTSMee", learn: "My Learning · IELTSMee", "listening-map": "Listening Map · IELTSMee", "writing-task-1": "Task 1 · IELTSMee", "writing-task-1-examples": "Task 1 examples · IELTSMee", "writing-task-2": "Task 2 · IELTSMee", "writing-task-2-examples": "Task 2 examples · IELTSMee" };
 const routeName = () => { const r = document.body.dataset.page || "home"; return PAGES[r] ? r : "home"; };
 let lastRoute = "";
 function saveView() {
@@ -263,6 +267,12 @@ document.addEventListener("click", (e) => {
     case "rtype": S.rtype = v; render(); return;
     case "t1": S.t1 = v; render(); return;
     case "t2": S.t2 = v; render(); return;
+    case "t1tab": setT1Tab(v); render(); return;
+    case "t1ex": setT1Example(v); render(); return;
+    case "t2tab": setT2Tab(v); render(); return;
+    case "t2day": setT2Day(v); render(); return;
+    case "t2phase": setT2Phase(v); render(); return;
+    case "t2ex": setT2Example(v); render(); return;
     case "idea": S.ideaTopic = v; render(); return;
     case "draft-clear": S.draft = ""; S.draftTitle = ""; render(); return;
     case "draft-save": {
@@ -342,6 +352,7 @@ document.addEventListener("keydown", (e) => {
 });
 document.addEventListener("change", (e) => {
   const t = e.target;
+  if (t.dataset.t2done) { toggleT2Day(t.dataset.t2done, t.checked); render(); return; }
   if (t.dataset.check) { toggleTick(t.dataset.check, t.dataset.skill, t.checked); render(); return; }
   if (t.dataset.actChange === "booksort") { S.bookSort = t.value; render(); return; }
   if (t.id === "draft-type") { S.draftType = t.value; render(); return; }
@@ -389,7 +400,9 @@ window.addEventListener("pagehide", saveView);
 window.addEventListener("resize", () => { if (window.matchMedia("(min-width: 1041px)").matches) setNav(false); });
 const here = document.body.dataset.page || "home";
 const legacy = (location.hash || "").replace(/^#/, "").split("?")[0];
+const noteJump = { "wr-t1": "/writing/task-1", "wr-t2": "/writing/task-2", "wr-t1-examples": "/writing/task-1/examples", "wr-examples": "/writing/task-2/examples" };
 if (legacy && PAGE_FILE[legacy] && legacy !== here) location.replace(url(legacy));
+else if (here === "writing" && noteJump[legacy]) location.replace(noteJump[legacy]);
 else {
   restoreView();
   const mod = new URLSearchParams(location.search).get("mod");
