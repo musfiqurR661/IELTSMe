@@ -77,7 +77,7 @@ function typesPanel() {
       <article><b>1</b><strong>Summarise data</strong><p class="bn">Bar, line, pie, table, multiple graph। মূল সংখ্যা আর তুলনা।</p></article>
       <article><b>2</b><strong>Stages of a process</strong><p class="bn">কয় ধাপ, কোন ক্রমে, কী দিয়ে। Sugar আর noodles এই দল।</p></article>
       <article><b>3</b><strong>How something works</strong><p class="bn">একই diagram। যন্ত্রের নাম থাকলে সেটা subject হতে পারে।</p></article>
-      <article><b>4</b><strong>An object or a place</strong><p class="bn">Academic Task 1-এ এটা গল্প নয়। Map, অথবা কোনো যন্ত্রের ছবি।</p></article>
+      <article><b>4</b><strong>An object or a place</strong><p class="bn">Academic Task 1-এ এটা গল্প নয়। Map: museum floor আর City Hospital। অথবা কোনো যন্ত্রের ছবি।</p></article>
     </div>
   </div>`;
 }
@@ -127,6 +127,16 @@ function shapePanel() {
     <p class="bn">একই চার অংশ। Overview-তে ধাপের সংখ্যা, শুরু আর শেষ। Body-তে ক্রম। Sugar সাত ধাপ, noodles আট।</p>
     ${flow(["Growing", "Harvesting", "Crushing", "Purifying", "Evaporator", "Centrifuge", "Drying"])}
     <p class="note">Noodles: silos, mixer, dough sheets, dough strips, discs, cooking and drying, vegetables and spices, labelling and sealing। Body ১–৪, তারপর ৫–৮।</p>
+    <h3>Map-এর সাজ</h3>
+    <p class="bn lead">সংযুক্ত বদল এক body-তে। যা একই রইল শেষে বা overview-তে। Past tense। দিক: north, opposite, to the west of।</p>
+    <div class="t1-pair">
+      <div class="t1-up"><b>Museum · Body 1</b><strong>Rooms that changed</strong><p class="bn">Archaeology → children's zone + poster area। Gift shop → café। Lift। Natural ও local history unchanged।</p></div>
+      <div class="t1-down"><b>Museum · Body 2</b><strong>Hall and entrance</strong><p class="bn">Reception সরানো। Statue কেন্দ্রে। Stairs একই।</p></div>
+    </div>
+    <div class="t1-pair">
+      <div class="t1-up"><b>Hospital · Body 1</b><strong>Roads and buses</strong><p class="bn">Bus stops → bus station পশ্চিমে। দুই roundabout।</p></div>
+      <div class="t1-down"><b>Hospital · Body 2</b><strong>Parking split</strong><p class="bn">Shared → staff only। নতুন public car park পূর্বে।</p></div>
+    </div>
   </div>`;
 }
 
@@ -195,6 +205,7 @@ function checkPanel() {
       ["বাড়া আর কমা আলাদা paragraph, ছোট ওঠানামা বাদ", "TA"],
       ["Trend-এর শব্দ একই নয়। Pronoun কাকে বোঝায় স্পষ্ট", "LR, CC"],
       ["Process হলে প্রতিটা ধাপ আছে, passive ঠিক, ক্রম ভাঙেনি", "TA, GRA"],
+      ["Map হলে বদল আর unchanged দুটোই আছে, দিকের ভাষা ঠিক", "TA, LR"],
       ["নাম আর বছরের বানান চার্টের মতো", "GRA"]
     ], 2)}
     <div class="t2-call"><b>যা বাদ থাকে</b><p class="bn">মতামত। Because people like the seaside-এর মতো কারণ, যদি চার্ট না বলে। বানানো টন বা শতাংশ। মুখস্থ একটা উত্তর অন্য চার্টে বসিয়ে দেওয়া।</p></div>

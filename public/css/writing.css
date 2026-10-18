@@ -194,6 +194,8 @@ mark.gr { background: transparent; box-shadow: inset 0 -2px 0 #7240e8; }
 .ex-key .k-fig, .sent.k-fig { background: #ffe8f0; }
 .ex-key .k-cmp, .sent.k-cmp { background: #e7f8ef; }
 .ex-key .k-stage, .sent.k-stage { background: #eef4ff; }
+.ex-key .k-chg, .sent.k-chg { background: #ffe8f0; }
+.ex-key .k-same, .sent.k-same { background: #e7f8ef; }
 @media (max-width: 900px) {
   .t1-types { grid-template-columns: 1fr 1fr; }
 }

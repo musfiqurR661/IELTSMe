@@ -1,4 +1,4 @@
-/* Four Task 1 prompts: two line graphs, two diagrams, each with a Band 8-style report. */
+/* Six Task 1 prompts: two line graphs, two diagrams, two maps, each with a Band 8-style report. */
 import { esc, store } from "./core.js?v=5";
 
 const KEY = "mmi-t1-ex";
@@ -7,7 +7,9 @@ const KIND = {
   ov: "Overview",
   fig: "Figure",
   cmp: "Compare",
-  stage: "Stage"
+  stage: "Stage",
+  chg: "Change",
+  same: "Unchanged"
 };
 
 const plain = (parts) => parts.map((p) => p.t).join("");
@@ -517,6 +519,271 @@ const EXAMPLES = [
       ["A next presses B into …, which are cut into ….", "B is next pressed into … and then cut into ….", "After pressing, B is cut into …."],
       ["Finally, … are labelled and sealed.", "The last stage is the labelling and sealing of ….", "The process finishes when … are labelled and sealed."]
     ]
+  },
+  {
+    id: "museum",
+    name: "Museum floor",
+    group: "map",
+    type: "Map",
+    topic: "Museum layout",
+    unit: "Rooms and facilities on the ground floor",
+    time: "1990 and 2010",
+    task: "Describe what changed and what stayed the same",
+    figure: "/img/t1/museum.png",
+    alt: "Plans of the ground floor of a museum in 1990 and in 2010",
+    kinds: ["para", "ov", "chg", "same"],
+    prompt: ["The plans below show the layout of the ground floor of a museum in 1990 and in 2010."],
+    stance: "Body 1-এ ডান-বাম কক্ষের বদল: archaeology, gift shop, lift। Body 2-এ মাঝের হল: reception, statue, stairs। যেটা একই রইল সেটা শেষে। Overview-তে ঘরের তালিকা নয়।",
+    caution: "মানচিত্রে যা আছে শুধু তাই: café and gift shop, lift, children's interactive zone, poster display area, reception-এর স্থানবদল, statue কেন্দ্রে। Entrance দ্বিগুণ হয়েছে বলা হয়নি। Stairs আর museum office, natural history, local history একই জায়গায়।",
+    paras: [
+      {
+        name: "Introduction",
+        idea: "show the layout না। কী, কোথায়, কখন — synonym দিয়ে।",
+        sentences: [
+          { kind: "para", parts: [
+            { t: "The maps " }, { t: "illustrate", m: "syn" }, { t: " " },
+            { t: "how the ground floor of a museum was arranged", m: "syn" },
+            { t: " in 1990 and in 2010." }
+          ] }
+        ]
+      },
+      {
+        name: "Overview",
+        idea: "মূল বদল: নতুন সুবিধা, বড় গ্যালারি ভাঙা, কিছু জিনিস স্থানান্তর। যেটা একই রইল এক লাইনে। ঘরের নামের তালিকা নয়।",
+        sentences: [
+          { kind: "ov", parts: [
+            { t: "Overall", m: "cc" }, { t: ", the ground floor " }, { t: "was substantially reorganised", m: "lex" },
+            { t: ": " }, { t: "new visitor facilities", m: "lex" }, { t: " appeared on the left, " },
+            { t: "while", m: "cc" }, { t: " the large archaeology gallery on the right " },
+            { t: "was replaced by", m: "lex" }, { t: " two smaller spaces." }
+          ] },
+          { kind: "ov", parts: [
+            { t: "The reception desk and the statue " }, { t: "were moved", m: "lex" },
+            { t: ", " }, { t: "whereas", m: "cc" }, { t: " several rooms and the stairs " },
+            { t: "stayed in the same place", m: "lex" }, { t: "." }
+          ] }
+        ]
+      },
+      {
+        name: "Body 1",
+        idea: "সংযুক্ত বদল একসাথে: archaeology → দুই কক্ষ, gift shop → café, lift। তারপর যে দুটো কক্ষ একই রইল।",
+        sentences: [
+          { kind: "chg", parts: [
+            { t: "Looking at the maps in more detail", m: "cc" }, { t: ", the archaeology gallery in the " },
+            { t: "top-right corner", m: "lex" }, { t: " " }, { t: "was converted into", m: "lex" },
+            { t: " a children's interactive zone and a poster display area." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "On the opposite side", m: "cc" }, { t: ", the gift shop in the " },
+            { t: "top-left corner", m: "lex" }, { t: " " }, { t: "was expanded into", m: "lex" },
+            { t: " a café and gift shop, " }, { t: "and", m: "cc" }, { t: " a lift " },
+            { t: "was installed", m: "gr" }, { t: " between that area and the natural history room." }
+          ] },
+          { kind: "same", parts: [
+            { t: "However", m: "cc" }, { t: ", the natural history room and the local history room " },
+            { t: "remained unchanged", m: "lex" }, { t: " over the period." }
+          ] }
+        ]
+      },
+      {
+        name: "Body 2",
+        idea: "প্রবেশ ও কেন্দ্র: reception, statue। Stairs শেষে unchanged। উপসংহার নেই।",
+        sentences: [
+          { kind: "chg", parts: [
+            { t: "The two maps also show that", m: "cc" }, { t: " the reception counter, which " },
+            { t: "was attached to", m: "lex" }, { t: " the museum office in 1990, " },
+            { t: "was resized and moved", m: "gr" }, { t: " closer to the entrance by 2010." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "At the same time", m: "cc" }, { t: ", the statue " }, { t: "was relocated", m: "lex" },
+            { t: " to the " }, { t: "centre of the ground floor", m: "lex" }, { t: "." }
+          ] },
+          { kind: "same", parts: [
+            { t: "Finally", m: "cc" }, { t: ", the stairs " }, { t: "opposite the entrance", m: "lex" },
+            { t: " " }, { t: "remained in the same position", m: "lex" }, { t: " throughout the period." }
+          ] }
+        ]
+      }
+    ],
+    synonyms: [
+      ["show", "illustrate", "depict, present"],
+      ["the layout of the ground floor of a museum", "how the ground floor of a museum was arranged", "the arrangement of rooms on the museum's ground floor"],
+      ["plans", "maps", "floor plans, diagrams"]
+    ],
+    lexis: [
+      ["was substantially reorganised", "ব্যাপকভাবে পুনর্বিন্যস্ত", "was extensively remodelled, underwent major changes"],
+      ["new visitor facilities", "নতুন দর্শক সুবিধা", "extra amenities for visitors, new services for the public"],
+      ["was replaced by", "প্রতিস্থাপিত হলো", "gave way to, was turned into"],
+      ["were moved", "সরানো হলো", "were shifted, changed position"],
+      ["stayed in the same place", "একই জায়গায় রইল", "kept their original positions, did not move"],
+      ["top-right corner", "উপরের ডান কোণ", "the upper right-hand corner"],
+      ["was converted into", "রূপান্তরিত হলো", "was turned into, became"],
+      ["top-left corner", "উপরের বাম কোণ", "the upper left-hand corner"],
+      ["was expanded into", "বড় করে হলো", "was enlarged to include, grew into"],
+      ["remained unchanged", "অপরিবর্তিত রইল", "stayed the same, were left as they were"],
+      ["was attached to", "সংলগ্ন ছিল", "stood beside, was next to"],
+      ["was relocated", "স্থানান্তরিত হলো", "was moved, was shifted"],
+      ["centre of the ground floor", "নিচতলার মাঝখান", "the middle of the hall, the centre of the floor"],
+      ["opposite the entrance", "প্রবেশপথের উল্টোদিকে", "across from the entrance, facing the entrance"],
+      ["remained in the same position", "একই অবস্থানে রইল", "kept their place, did not move"]
+    ],
+    grammar: [
+      ["Passive for completed change", "was converted / was expanded / was installed / was resized and moved / was relocated", "They converted the gallery. Prefer passive when the doer is not named."],
+      ["which + past", "which was attached to the museum office in 1990", "and that counter was attached to the museum office in 1990"],
+      ["by + year", "by 2010", "in 2010, when the second map was drawn"]
+    ],
+    cohesion: [
+      ["Overall / while / whereas", "overview-এ বদল আর অপরিবর্তিত"],
+      ["Looking at the maps in more detail", "Body 1 শুরু"],
+      ["On the opposite side", "বাম পাশ ডানের পর"],
+      ["However", "একই রুম শেষে"],
+      ["The two maps also show that / At the same time / Finally", "Body 2-এর ধারা"]
+    ],
+    daily: [
+      ["The maps illustrate how X was arranged in A and in B.", "The maps show the layout of X in A and B.", "The plans depict the arrangement of X in two years."],
+      ["Overall, X was substantially reorganised, while Y stayed in the same place.", "Overall, X changed a great deal, whereas Y remained unchanged.", "Overall, the site was remodelled, but some features kept their original positions."],
+      ["Looking at the maps in more detail, A was converted into B and C.", "In more detail, A was turned into B and C.", "A closer look shows that A became B and C."],
+      ["On the opposite side, D was expanded into E, and a lift was installed.", "Across the hall, D grew into E, and a lift was added.", "Meanwhile, D was enlarged to include E, with a new lift nearby."],
+      ["However, F and G remained unchanged over the period.", "F and G, by contrast, stayed the same.", "F and G did not change throughout the period."],
+      ["X, which was attached to Y in A, was moved closer to Z by B.", "In A, X stood beside Y; by B it had been shifted nearer Z.", "X was next to Y in A, but by B it had been relocated nearer Z."]
+    ]
+  },
+  {
+    id: "hospital",
+    name: "City Hospital",
+    group: "map",
+    type: "Map",
+    topic: "Hospital site",
+    unit: "Roads, parking and public transport",
+    time: "2007 and 2010",
+    task: "Describe what changed and what stayed the same",
+    figure: "/img/t1/hospital.png",
+    alt: "Maps of City Hospital in 2007 and in 2010",
+    kinds: ["para", "ov", "chg", "same"],
+    prompt: ["The maps below show the changes in the area around City Hospital between 2007 and 2010."],
+    stance: "Body 1-এ রাস্তা ও বাস: bus stops → bus station, দুই roundabout। Body 2-এ পার্কিং আলাদা। Hospital building overview-তে unchanged। North দিয়ে দিক বলুন।",
+    caution: "মানচিত্রে যা আছে শুধু তাই: Ring Road, Hospital Rd, City Road, ছয় bus stop, bus station পশ্চিমে, দুই roundabout, staff car park, নতুন public car park পূর্বে। মূল ভবন একই।",
+    paras: [
+      {
+        name: "Introduction",
+        idea: "changes in the area → infrastructure and access। বছর দুটো রাখা।",
+        sentences: [
+          { kind: "para", parts: [
+            { t: "The maps " }, { t: "illustrate", m: "syn" }, { t: " the " },
+            { t: "structural alterations", m: "syn" }, { t: " made to the " },
+            { t: "infrastructure and access routes", m: "syn" },
+            { t: " of City Hospital between 2007 and 2010." }
+          ] }
+        ]
+      },
+      {
+        name: "Overview",
+        idea: "আধুনিকায়ন: ট্রাফিক আর পার্কিং আলাদা। মূল ভবন একই। সংখ্যা বা পূর্ণ তালিকা নয়।",
+        sentences: [
+          { kind: "ov", parts: [
+            { t: "Overall", m: "cc" }, { t: ", the hospital area " },
+            { t: "underwent significant modernisation", m: "lex" },
+            { t: ", " }, { t: "characterised by", m: "lex" },
+            { t: " " }, { t: "traffic-management improvements", m: "lex" },
+            { t: " and the " }, { t: "separation of parking", m: "lex" },
+            { t: " for staff and the public." }
+          ] },
+          { kind: "ov", parts: [
+            { t: "The main hospital building itself " }, { t: "remained unchanged", m: "lex" },
+            { t: ", " }, { t: "but", m: "cc" }, { t: " the surrounding transport network " },
+            { t: "was substantially reconfigured", m: "lex" }, { t: "." }
+          ] }
+        ]
+      },
+      {
+        name: "Body 1",
+        idea: "প্রথমে 2007-এর রাস্তা ও বাস। তারপর 2010: bus station পশ্চিমে, দুই roundabout।",
+        sentences: [
+          { kind: "chg", parts: [
+            { t: "In 2007", m: "cc" }, { t: ", access to the hospital was via Hospital Road, which " },
+            { t: "connected", m: "lex" }, { t: " City Road to the Ring Road " },
+            { t: "encircling", m: "lex" }, { t: " the main building." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "Six bus stops " }, { t: "were located", m: "gr" }, { t: " directly along Hospital Road, three on each side." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "By 2010", m: "cc" }, { t: ", these individual stops " }, { t: "had been removed", m: "gr" },
+            { t: " and " }, { t: "replaced by", m: "lex" }, { t: " a dedicated bus station " },
+            { t: "to the west of", m: "lex" }, { t: " Hospital Road, linked by new slip roads." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "Additionally", m: "cc" }, { t: ", two roundabouts " }, { t: "were introduced", m: "gr" },
+            { t: ": one at the junction of City Road and Hospital Road, and another where Hospital Road " },
+            { t: "meets", m: "lex" }, { t: " the Ring Road." }
+          ] }
+        ]
+      },
+      {
+        name: "Body 2",
+        idea: "পার্কিং: shared → staff only; নতুন public car park পূর্বে, Ring Road থেকে। উপসংহার নেই।",
+        sentences: [
+          { kind: "chg", parts: [
+            { t: "Parking " }, { t: "was also reorganised", m: "lex" }, { t: "." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "In 2007", m: "cc" }, { t: ", a single shared car park for staff and the public " },
+            { t: "stood", m: "lex" }, { t: " " }, { t: "to the east of", m: "lex" }, { t: " Hospital Road." }
+          ] },
+          { kind: "chg", parts: [
+            { t: "By 2010", m: "cc" }, { t: ", that zone " }, { t: "was restricted", m: "gr" },
+            { t: " to staff only, " }, { t: "while", m: "cc" }, { t: " a " },
+            { t: "larger public car park", m: "lex" }, { t: " " }, { t: "was built", m: "gr" },
+            { t: " on the " }, { t: "eastern side of the hospital", m: "lex" },
+            { t: ", with direct access from the Ring Road." }
+          ] }
+        ]
+      }
+    ],
+    synonyms: [
+      ["show", "illustrate", "depict, present"],
+      ["the changes in the area around City Hospital", "the structural alterations made to the infrastructure and access routes of City Hospital", "how the surroundings of City Hospital were altered"],
+      ["between 2007 and 2010", "between 2007 and 2010, by 2010", "from 2007 to 2010, over the three-year period"]
+    ],
+    lexis: [
+      ["structural alterations", "কাঠামোগত পরিবর্তন", "physical changes, modifications to the layout"],
+      ["infrastructure and access routes", "অবকাঠামো ও প্রবেশপথ", "roads and facilities around the site, the transport layout"],
+      ["underwent significant modernisation", "উল্লেখযোগ্য আধুনিকায়ন হলো", "was heavily modernised, saw major upgrades"],
+      ["characterised by", "যার বৈশিষ্ট্য", "marked by, featuring"],
+      ["traffic-management improvements", "যানবাহন নিয়ন্ত্রণের উন্নতি", "better control of traffic, upgraded junctions"],
+      ["separation of parking", "পার্কিং আলাদা করা", "split parking areas, parking divided by user"],
+      ["remained unchanged", "অপরিবর্তিত রইল", "stayed the same, was left as it was"],
+      ["was substantially reconfigured", "ব্যাপকভাবে পুনর্বিন্যস্ত", "was extensively redesigned, was largely rearranged"],
+      ["connected", "সংযুক্ত করল", "linked, joined"],
+      ["encircling", "ঘিরে থাকা", "surrounding, going around"],
+      ["replaced by", "প্রতিস্থাপিত", "superseded by, given way to"],
+      ["to the west of", "পশ্চিমে", "west of, on the western side of"],
+      ["meets", "মিলিত হয়", "joins, intersects"],
+      ["was also reorganised", "পুনর্বিন্যস্তও হলো", "was rearranged as well, was redesigned too"],
+      ["stood", "অবস্থিত ছিল", "was located, was situated"],
+      ["to the east of", "পূর্বে", "east of, on the eastern side of"],
+      ["larger public car park", "বড় জনসাধারণের গাড়ি পার্ক", "a bigger car park for visitors, an expanded public parking area"],
+      ["eastern side of the hospital", "হাসপাতালের পূর্ব পাশ", "east of the main building, on the hospital's east side"]
+    ],
+    grammar: [
+      ["Passive for completed change", "were located / had been removed / were introduced / was restricted / was built", "Engineers removed the stops. Prefer passive when the doer is unnamed."],
+      ["Past perfect for earlier removal", "had been removed and replaced by", "were removed and replaced by"],
+      ["while + contrast", "while a larger public car park was built", "and a larger public car park was built"]
+    ],
+    cohesion: [
+      ["Overall / but", "overview-এ আধুনিকায়ন আর অপরিবর্তিত ভবন"],
+      ["In 2007 / By 2010", "Body 1-এ আগে-পরে"],
+      ["Additionally", "roundabout দ্বিতীয় বদল"],
+      ["In 2007 / By 2010 / while", "Body 2-এ পার্কিং"]
+    ],
+    daily: [
+      ["The maps illustrate the structural alterations made to X between A and B.", "The maps show how the area around X changed from A to B.", "The maps depict the infrastructure changes at X between A and B."],
+      ["Overall, the site underwent significant modernisation, but the main building remained unchanged.", "Overall, transport and parking were upgraded, whereas the main building stayed the same.", "Overall, the surroundings were reconfigured, while the core building did not move."],
+      ["In A, access was via Road X, which connected Y to Z.", "At the start, Road X linked Y with Z.", "In A, visitors reached the site along Road X from Y to Z."],
+      ["By B, the bus stops had been removed and replaced by a bus station to the west of Road X.", "By B, a dedicated bus station west of Road X had replaced the roadside stops.", "Later, the individual stops gave way to a bus station on the western side."],
+      ["Additionally, two roundabouts were introduced at the key junctions.", "Two roundabouts were also added at the main intersections.", "New roundabouts appeared where the roads meet."],
+      ["By B, the shared car park was restricted to staff, while a larger public car park was built to the east.", "Staff kept the old car park; a new public one opened on the eastern side.", "Parking was split: staff stayed east of Road X, and visitors used a new lot east of the building."]
+    ]
   }
 ];
 
@@ -573,12 +840,12 @@ function reportHtml(ex) {
     <h3>Cohesion</h3>
     ${rows(["যোগ", "কাজ"], ex.cohesion)}
     <h3>অন্য লেখায়ও বসবে</h3>
-    <p class="bn lead">X, Y আর বছর বদলে এই ছাঁচ অন্য চার্ট বা process-এ বসবে। একটা উত্তর মুখস্থ করে বারবার লিখবেন না।</p>
+    <p class="bn lead">X, Y আর বছর বদলে এই ছাঁচ অন্য চার্ট, process বা map-এ বসবে। একটা উত্তর মুখস্থ করে বারবার লিখবেন না।</p>
     <ul class="ex-daily">${daily}</ul>
   </article>`;
 }
 
-const GROUPS = [["line", "Line graph"], ["diagram", "Diagram"]];
+const GROUPS = [["line", "Line graph"], ["diagram", "Diagram"], ["map", "Map"]];
 
 export function task1ExamplesHtml() {
   const id = t1ExampleId();
@@ -589,7 +856,7 @@ export function task1ExamplesHtml() {
   }).join("");
   return `<section class="card t2-examples t1-examples" id="wr-t1-examples">
     <div class="section-head"><h2>Task 1 examples</h2><span class="more">Band 8+ sample</span></div>
-    <p class="bn lead">চারটা example, দুই দলে। Line graph-এ Brighton আর CO₂। Diagram-এ sugar আর instant noodles। প্রতিটাতে প্রশ্নের ছবি, উত্তর, আর রঙিন বিবরণ। Overview-তে নির্দিষ্ট সংখ্যা নয়। কমপক্ষে ১৫০ words।</p>
+    <p class="bn lead">ছয়টা example, তিন দলে। Line graph-এ Brighton আর CO₂। Diagram-এ sugar আর instant noodles। Map-এ museum floor আর City Hospital। প্রতিটাতে প্রশ্নের ছবি, উত্তর, আর রঙিন বিবরণ। Overview-তে নির্দিষ্ট সংখ্যা নয়। কমপক্ষে ১৫০ words।</p>
     <div class="ex-groups">${groups}</div>
     ${reportHtml(ex)}
   </section>`;

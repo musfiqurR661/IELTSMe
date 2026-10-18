@@ -1,7 +1,7 @@
 import { D, S, store, hero, crumb, ic, esc, lizBtn, ico, shell, weekPct, isTicked, todayDone, url } from "../core.js?v=5";
 import { learnFinish } from "./learn.js?v=8";
-import { task1NoteHtml } from "../task1-note.js?v=2";
-import { task1ExamplesHtml } from "../task1-examples.js?v=4";
+import { task1NoteHtml } from "../task1-note.js?v=3";
+import { task1ExamplesHtml } from "../task1-examples.js?v=5";
 import { task2NoteHtml } from "../task2-note.js?v=2";
 import { task2ExamplesHtml } from "../task2-examples.js?v=2";
 
@@ -72,7 +72,7 @@ export function pageWritingTask1() {
   return shell("l-main", "", main);
 }
 export function pageWritingTask1Examples() {
-  const main = `${studyHero("Task 1 examples", "Task 1 examples", "chart", "blue", "Four Band 8+ reports. Line graphs and diagrams, with the picture beside the answer.", `<a class="btn solid" href="/writing/task-1">${ic("book")}Task 1 note</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task1ExamplesHtml()}`;
+  const main = `${studyHero("Task 1 examples", "Task 1 examples", "chart", "blue", "Six Band 8+ reports. Line graphs, diagrams and maps, with the picture beside the answer.", `<a class="btn solid" href="/writing/task-1">${ic("book")}Task 1 note</a><a class="btn" href="${url("writing")}">${ic("pen")}Writing</a>`)}${task1ExamplesHtml()}`;
   return shell("l-main", "", main);
 }
 export function pageWritingTask2() {
